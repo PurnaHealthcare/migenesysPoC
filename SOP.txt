@@ -1,0 +1,369 @@
+**Core Concept:** *A calm, intelligent companion for managing one’s Health Journey*
+
+---
+
+## 1. Purpose
+
+This SOP defines the standardized processes, user flows, data handling principles, and design guidelines for a cross-platform healthcare application that enables users to:
+
+* Securely manage personal health information
+* Track treatments in a **welcoming, non-clinical way**
+* Maintain a lifelong medication and medical report history
+* Receive smart medication reminders
+* Use the app comfortably multiple times per day
+* Access the app in multiple languages and regions
+* Experience minimal cognitive and data-entry burden
+
+---
+
+## 2. Guiding Principles
+
+### 2.1 Minimum User Effort
+
+* Users should **never enter data the system can infer**
+* Manual input is limited to **choices and confirmations**
+
+### 2.2 Welcoming & Self-Initiating Language
+
+* Avoid fear-based or clinical terms
+* Use **“Health Journey”** instead of illness/disease
+* Encourage care, not diagnosis
+
+### 2.3 Progressive Disclosure
+
+* Show only what is needed at the moment
+* Advanced fields appear only if required
+
+### 2.4 Privacy by Default
+
+* All user data is private and visible only to the user
+* No sharing unless explicitly initiated by the user
+
+---
+
+## 3. User Roles
+
+### 3.1 End User
+
+* Sole owner of all personal health data
+* Can create, edit, view, export, or delete their data
+* No other users or administrators can view PHI
+
+---
+
+## 4. Platform & Consistency Standards
+
+* Feature parity across Web, Android, and iOS
+* Unified backend and encrypted APIs
+* Real-time synchronization across devices
+* Platform-specific UX conventions respected
+
+---
+
+## 5. User Onboarding & Authentication SOP
+
+### 5.1 Registration
+
+* Triggered when user is not logged in
+* Requires:
+
+  * Email or mobile number
+  * Password
+  * OTP / verification
+* User must accept:
+
+  * Terms of Service
+  * Privacy Policy
+
+### 5.2 Login
+
+* Secure authentication
+* Biometric login supported where available
+* Automatic session timeout for inactivity
+
+---
+
+## 6. User Profile Management SOP (Low-Friction)
+
+### 6.1 Minimal Required Inputs
+
+User manually enters:
+
+* Date of birth
+* Sex
+
+### 6.2 Auto-Derived Data
+
+System automatically derives:
+
+* Age
+* BMI (from height & weight)
+* Health reference ranges
+* Regional defaults (units, formats)
+
+### 6.3 Profile Updates
+
+* Height and weight entered once
+* System prompts updates only when relevant
+* Historical values optionally tracked
+
+---
+
+## 7. Health Journey Management SOP
+
+### 7.1 Definition
+
+A **Health Journey** represents any condition, care plan, recovery, or preventive treatment the user wishes to track.
+
+### 7.2 Journey Creation (Welcoming Entry)
+
+Prompt:
+
+> **“What would you like to take care of today?” 💙**
+
+User enters:
+
+* Free text or selects from suggestions
+
+### 7.3 Auto-Configuration
+
+System automatically sets:
+
+* Start date = today
+* Status = Active
+* Suggested next steps
+
+---
+
+## 8. Doctor & Care Provider SOP
+
+* User enters doctor name (partial or full)
+* System auto-suggests:
+
+  * Previously used doctors
+  * Known providers from database
+* Specialization and clinic auto-filled if available
+* Multiple doctors allowed per Health Journey (second opinions)
+
+---
+
+## 9. Medication Management SOP (Ultra-Low Input)
+
+### 9.1 Medication Search
+
+* Brand-based search
+* Auto-suggestions while typing
+* Region-specific medication databases
+
+### 9.2 Auto-Derived Medication Details
+
+From brand selection, system fills:
+
+* Generic name
+* Drug class
+* Typical dosage range
+* Route of administration
+* Frequency suggestions
+
+### 9.3 User Confirmation Only
+
+User confirms:
+
+* Dosage
+* Frequency
+
+Everything else is pre-filled and editable but optional.
+
+---
+
+## 10. Medication Reminders SOP
+
+### 10.1 Reminder Eligibility
+
+* Enabled only for ongoing medications
+* Automatically suggested by the system
+
+### 10.2 Reminder Setup
+
+Prompt:
+
+> **“Would you like a reminder for this medication?” ⏰**
+
+* Default: Yes
+* User can adjust time(s)
+* Supports snooze and skip
+
+### 10.3 Reminder Intelligence
+
+System automatically:
+
+* Adjusts to timezone
+* Pauses reminders when medication ends
+* Learns preferred reminder times
+
+### 10.4 Reminder Tone
+
+* Gentle, encouraging, non-alarming
+* Example:
+
+  > “Time for your medication 💊 You’re doing great!”
+
+---
+
+## 11. Medical Reports SOP
+
+### 11.1 Upload
+
+* Upload or scan documents (PDF, JPG, PNG)
+
+### 11.2 Auto-Extraction
+
+System uses OCR to derive:
+
+* Report type
+* Date
+* Doctor name
+* Related Health Journey
+
+User only confirms correctness.
+
+### 11.3 Secure Storage
+
+* Encrypted at rest and in transit
+* Accessible only to the user
+
+---
+
+## 12. Timeline & History Visualization SOP
+
+### 12.1 Health Timeline
+
+* Chronological view of:
+
+  * Health Journeys
+  * Medications
+  * Reports
+  * Doctor interactions
+
+### 12.2 Smart Language
+
+Examples:
+
+* “You started this medication 💊”
+* “Health Journey completed 🤍”
+
+### 12.3 Filters
+
+* By time period
+* By journey
+* By medication or doctor
+
+---
+
+## 13. Privacy, Security & Compliance SOP
+
+* End-to-end encryption
+* No internal access to PHI
+* Audit logs maintained
+* User can export or permanently delete data
+* GDPR, HIPAA, and regional compliance supported
+
+---
+
+## 14. Multi-Language & Multi-Region SOP
+
+### 14.1 Language Support
+
+* Language selected automatically from device
+* User can change anytime
+
+Initial regions:
+
+* English (Global)
+* Spanish (Latin America & Europe)
+* Portuguese (Brazil)
+* Hindi
+* Mandarin
+* French
+* German
+* Asian regional languages (expandable)
+
+### 14.2 Regional Adaptation
+
+System auto-adjusts:
+
+* Units (kg/lb, cm/ft)
+* Date formats
+* Medication brands
+* Medical conventions
+
+---
+
+## 15. UI/UX & Emotional Design SOP
+
+### 15.1 Color Palette
+
+* Soft blues 💙
+* Gentle greens 🌱
+* Warm accents 🌼
+* Avoid harsh reds and clinical whites
+
+### 15.2 Emoji Usage
+
+* Emojis support emotion, never replace text
+* Used sparingly and consistently
+
+Approved examples:
+
+* 💙 🌱 💊 ⏰ ✔️ 🤍
+
+### 15.3 Micro-Encouragement
+
+* Periodic positive reinforcement
+* No guilt or pressure
+* No aggressive gamification
+
+---
+
+## 16. Accessibility SOP
+
+* Large tap targets
+* Screen reader compatibility
+* High-contrast mode
+* Emoji always paired with text
+
+---
+
+## 17. Data Retention & Deletion SOP
+
+* User can:
+
+  * Delete individual entries
+  * Export all data
+  * Permanently delete account
+* Deleted data removed per regulatory timelines
+
+---
+
+## 18. Outcome of This SOP
+
+This SOP ensures the application:
+
+* Feels calm, human, and supportive
+* Requires minimal effort from users
+* Encourages frequent daily use
+* Scales globally
+* Maintains strict privacy and trust
+* Builds a lifelong, user-owned health record
+
+---
+
+If you want next, I can:
+
+* Convert this SOP into a **PRD**
+* Create **UX copy for every screen**
+* Design **notification & reminder scripts**
+* Define **AI/OCR derivation rules**
+* Create a **compliance-ready documentation pack**
+
+Just tell me the next step 💙
