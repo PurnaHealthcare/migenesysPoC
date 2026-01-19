@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:migenesys_poc/features/health_journey/model/health_journey.dart';
 import 'widgets/vitals_graph_widget.dart';
 import 'dart:math';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:migenesys_poc/features/dashboard/view_model/subscription_provider.dart';
+import 'package:migenesys_poc/features/dashboard/view/screens/my_providers_screen.dart';
+import 'package:migenesys_poc/features/dashboard/view/screens/provider_map_screen.dart';
 
-class JourneyDetailScreen extends StatelessWidget {
+class JourneyDetailScreen extends ConsumerWidget {
   final HealthJourney journey;
 
   const JourneyDetailScreen({super.key, required this.journey});
@@ -28,8 +32,9 @@ class JourneyDetailScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final medicationStartDates = [journey.startDate]; // Use journey start as med start for now
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSubscribed = ref.watch(subscriptionProvider);
+    final medicationStartDates = [journey.startDate];
 
     return Scaffold(
       appBar: AppBar(
@@ -94,11 +99,144 @@ class JourneyDetailScreen extends StatelessWidget {
               ...journey.medications.map((med) => Card(
                 child: ListTile(
                   leading: const Icon(Icons.medication, color: Colors.teal),
-                  title: Text(med.brandName),
+                  title: Text(
+                    med.brandName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: med.brandName == 'Carvedilol'
+                          ? Colors.green[700]
+                          : med.brandName == 'Lisinopril'
+                              ? Colors.orange[800]
+                              : isSubscribed
+                                  ? (med.brandName == 'Plavix' ? Colors.red : (med.brandName == 'Atorvastatin' ? Colors.orange[800] : null))
+                                  : null,
+                    ),
+                  ),
                   subtitle: Text('${med.genericName} • ${med.dosage}'),
                   trailing: Text(med.frequency),
+                  onTap: () {
+                    if (med.brandName == 'Plavix' && isSubscribed) {
+                      _showPlavixAlert(context);
+                    } else if (med.brandName == 'Atorvastatin' && isSubscribed) {
+                      _showAtorvastatinAlert(context);
+                    } else if (med.brandName == 'Lisinopril') {
+                      _showLisinoprilAlert(context);
+                    }
+                  },
                 ),
               )).toList(),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () => _showPharmacySelectionDialog(context),
+              icon: const Icon(Icons.shopping_cart_outlined),
+              label: const Text('Order My Medications'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF81C784),
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 56),
+              ),
+            ),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- Alert Dialogs (Same as HealthJourneyScreen) ---
+
+  void _showPlavixAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Medication Alert', style: TextStyle(color: Colors.red)),
+        content: const Text('Genetic analysis indicates Plavix will be ineffective for you. Important risk of future cardiovascular events.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProvidersScreen()));
+            },
+            child: const Text('Call My Provider'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAtorvastatinAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Medication Risk', style: TextStyle(color: Colors.orange)),
+        content: const Text('High risk for Statin side effects causing muscle pain (myopathy). Please monitor symptoms closely.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProvidersScreen()));
+            },
+            child: const Text('Call My Provider'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLisinoprilAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Alert: Medication Status', style: TextStyle(color: Colors.orange)),
+        content: const Text('Recent blood tests indicate kidney values need attention. This medication dosage may need adjustment.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProvidersScreen()));
+            },
+            child: const Text('Call My Provider'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPharmacySelectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Pharmacy'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.local_hospital),
+              title: const Text('Hospital de los Valles'),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.store),
+              title: const Text('Farmacias Fybeca'),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.storefront),
+              title: const Text('Sana Sana'),
+              onTap: () => Navigator.pop(context),
+            ),
+            const Divider(),
+            TextButton.icon(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ProviderMapScreen()));
+              },
+              icon: const Icon(Icons.map),
+              label: const Text('Map Search'),
+            ),
           ],
         ),
       ),

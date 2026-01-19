@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:migenesys_poc/features/dashboard/view_model/vitals_provider.dart';
+import '../../widgets/vitals_timeline_graph.dart';
 
 class PulseScreen extends ConsumerStatefulWidget {
   const PulseScreen({super.key});
@@ -57,6 +58,8 @@ class _PulseScreenState extends ConsumerState<PulseScreen> {
                 child: const Text('Save Record'),
               ),
             ),
+            const SizedBox(height: 24),
+            const VitalsTimelineGraph(title: 'Pulse'),
           ],
         ),
       ),

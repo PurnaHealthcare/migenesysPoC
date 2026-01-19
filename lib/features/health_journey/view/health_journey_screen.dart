@@ -5,6 +5,8 @@ import 'widgets/add_journey_dialog.dart';
 import 'package:migenesys_poc/features/dashboard/view/screens/subscription_screen.dart';
 import 'package:migenesys_poc/features/dashboard/view_model/subscription_provider.dart';
 import 'journey_detail_screen.dart';
+import 'package:migenesys_poc/features/dashboard/view/screens/my_providers_screen.dart';
+import 'package:migenesys_poc/features/dashboard/view/screens/provider_map_screen.dart';
 
 class HealthJourneyScreen extends ConsumerWidget {
   const HealthJourneyScreen({super.key});
@@ -126,17 +128,7 @@ class HealthJourneyScreen extends ConsumerWidget {
                     ),
                   ),
                   const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                      child: Text(
-                        'All Medications 💊',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF455A64),
-                        ),
-                      ),
-                    ),
+                    child: BlinkingMedicationHeader(),
                   ),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
@@ -178,7 +170,13 @@ class HealthJourneyScreen extends ConsumerWidget {
                               med.brandName,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: (isSubscribed && med.brandName == 'Plavix') ? Colors.red : null,
+                                color: med.brandName == 'Carvedilol'
+                                    ? Colors.green[700]
+                                    : med.brandName == 'Lisinopril'
+                                        ? Colors.orange[800]
+                                        : isSubscribed
+                                            ? (med.brandName == 'Plavix' ? Colors.red : (med.brandName == 'Atorvastatin' ? Colors.orange[800] : null))
+                                            : null,
                               ),
                             ),
                             subtitle: Column(
@@ -209,10 +207,34 @@ class HealthJourneyScreen extends ConsumerWidget {
                               ],
                             ),
                             isThreeLine: true,
+                            onTap: isSubscribed ? () {
+                              if (med.brandName == 'Plavix') {
+                                _showPlavixAlert(context);
+                              } else if (med.brandName == 'Atorvastatin') {
+                                _showAtorvastatinAlert(context);
+                              } else if (med.brandName == 'Lisinopril') {
+                                _showLisinoprilAlert(context);
+                              }
+                            } : null,
                           ),
                         );
                       },
                       childCount: journeys.expand((j) => j.medications).length,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: ElevatedButton.icon(
+                        onPressed: () => _showPharmacySelectionDialog(context),
+                        icon: const Icon(Icons.shopping_cart_outlined),
+                        label: const Text('Order My Medications'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF81C784),
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(double.infinity, 56),
+                        ),
+                      ),
                     ),
                   ),
                   const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
@@ -321,6 +343,181 @@ class HealthJourneyScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AddJourneyDialog(ref: ref),
+    );
+  }
+
+  void _showPlavixAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Medication Alert', style: TextStyle(color: Colors.red)),
+        content: const Text('Genetic analysis indicates Plavix will be ineffective for you. Important risk of future cardiovascular events.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProvidersScreen()));
+            },
+            child: const Text('Call My Provider'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAtorvastatinAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Medication Risk', style: TextStyle(color: Colors.orange)),
+        content: const Text('High risk for Statin side effects causing muscle pain (myopathy). Please monitor symptoms closely.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProvidersScreen()));
+            },
+            child: const Text('Call My Provider'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLisinoprilAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Alert: Medication Status', style: TextStyle(color: Colors.orange)),
+        content: const Text('Recent blood tests indicate kidney values need attention. This medication dosage may need adjustment.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const MyProvidersScreen()));
+            },
+            child: const Text('Call My Provider'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPharmacySelectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Pharmacy'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.local_hospital),
+              title: const Text('Hospital de los Valles'),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.store),
+              title: const Text('Farmacias Fybeca'),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.storefront),
+              title: const Text('Sana Sana'),
+              onTap: () => Navigator.pop(context),
+            ),
+            const Divider(),
+            TextButton.icon(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ProviderMapScreen()));
+              },
+              icon: const Icon(Icons.map),
+              label: const Text('Map Search'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BlinkingMedicationHeader extends ConsumerStatefulWidget {
+  const BlinkingMedicationHeader({super.key});
+
+  @override
+  ConsumerState<BlinkingMedicationHeader> createState() => _BlinkingMedicationHeaderState();
+}
+
+class _BlinkingMedicationHeaderState extends ConsumerState<BlinkingMedicationHeader> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    )..repeat(reverse: true);
+    _colorAnimation = ColorTween(
+      begin: Colors.transparent,
+      end: Colors.red.withOpacity(0.3),
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isSubscribed = ref.watch(subscriptionProvider);
+
+    return GestureDetector(
+      onTap: !isSubscribed ? () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const SubscriptionScreen(overlayTitle: 'MiGenomic 360 & Assist')));
+      } : null,
+      child: AnimatedBuilder(
+        animation: _colorAnimation,
+        builder: (context, child) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+            decoration: BoxDecoration(
+              color: !isSubscribed ? _colorAnimation.value : Colors.transparent,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'All Medications 💊',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF455A64),
+                    ),
+                  ),
+                  if (!isSubscribed)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        'Important information missing. Tap to subscribe.',
+                        style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

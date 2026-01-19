@@ -48,19 +48,26 @@ class ProviderMapScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const ListTile(
-                      leading: CircleAvatar(child: Icon(Icons.person)),
-                      title: Text('Dr. Sarah Smith'),
-                      subtitle: Text('Cardiologist • 1.2 miles away'),
+                      leading: CircleAvatar(child: Icon(Icons.location_city)),
+                      title: Text('Q\'Ra'),
+                      subtitle: Text('Diagnostic Imaging Center • 0.8 miles away'),
                       trailing: Icon(Icons.star, color: Colors.amber),
                     ),
                     const Divider(),
+                    const ListTile(
+                      leading: CircleAvatar(child: Icon(Icons.business)),
+                      title: Text('Hospital de los Valles'),
+                      subtitle: Text('Full-service Hospital • 2.4 miles away'),
+                      trailing: Icon(Icons.star, color: Colors.amber),
+                    ),
+                    const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton.icon(
                           onPressed: () {
                              ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Calling Dr. Smith...')),
+                              const SnackBar(content: Text('Calling Hospital de los Valles...')),
                             );
                           },
                           icon: const Icon(Icons.call),
@@ -70,7 +77,7 @@ class ProviderMapScreen extends StatelessWidget {
                         ElevatedButton.icon(
                           onPressed: () {
                              ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Navigating to clinic...')),
+                              const SnackBar(content: Text('Navigating to Q\'Ra...')),
                             );
                           },
                           icon: const Icon(Icons.directions),

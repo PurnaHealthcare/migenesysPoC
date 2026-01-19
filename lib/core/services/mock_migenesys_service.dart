@@ -16,13 +16,31 @@ class MockMiGenesysService implements IMiGenesysService {
         startDate: DateTime.now().subtract(const Duration(days: 10)),
         period: 'Ongoing',
         medications: [
-          Medication(
-            brandName: 'Plavix',
-            genericName: 'Clopidogrel',
-            dosage: '75mg',
-            frequency: 'Once daily',
-          ),
-        ],
+            Medication(
+              brandName: 'Plavix',
+              genericName: 'Clopidogrel',
+              dosage: '75mg',
+              frequency: 'Once daily',
+            ),
+            Medication(
+              brandName: 'Atorvastatin',
+              genericName: 'Lipitor',
+              dosage: '10mg',
+              frequency: 'Once daily',
+            ),
+            Medication(
+              brandName: 'Carvedilol',
+              genericName: 'Coreg',
+              dosage: '12.5mg',
+              frequency: 'Twice daily',
+            ),
+            Medication(
+              brandName: 'Lisinopril',
+              genericName: 'Zestril',
+              dosage: '10mg',
+              frequency: 'Once daily',
+            ),
+          ],
       ),
     );
     _controller.add(List.unmodifiable(_journeys));

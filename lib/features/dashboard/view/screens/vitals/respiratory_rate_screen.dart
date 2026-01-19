@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:migenesys_poc/features/dashboard/view_model/vitals_provider.dart';
+import '../../widgets/vitals_timeline_graph.dart';
 
 class RespiratoryRateScreen extends ConsumerStatefulWidget {
   const RespiratoryRateScreen({super.key});
@@ -60,6 +61,8 @@ class _RespiratoryRateScreenState extends ConsumerState<RespiratoryRateScreen> {
                 child: const Text('Save Record'),
               ),
             ),
+            const SizedBox(height: 24),
+            const VitalsTimelineGraph(title: 'Respiratory Rate'),
           ],
         ),
       ),
