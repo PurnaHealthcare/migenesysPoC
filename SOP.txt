@@ -58,6 +58,20 @@ This SOP defines the standardized processes, user flows, data handling principle
 * Real-time synchronization across devices
 * Platform-specific UX conventions respected
 
+## 5. Dashboard & Navigation Standards
+
+### 5.1 Branding
+* Main title: **“Healthcentral”**
+* Style: Minimalist, clean, with transparency effects (Glassmorphism)
+
+### 5.2 Global Action Cluster (Header)
+* **Left**: Calendar 📅 (Appointments) and Notifications 🔔 (Alerts)
+* **Center**: The user's health status/avatar
+* **Right**: Allergy status icon (Coronavirus icon, Red if allergic) and Speed dial for Providers 📞
+
+### 5.3 Bottom Navigation
+* Home | Journeys | Reports | Settings
+
 ---
 
 ## 5. User Onboarding & Authentication SOP
@@ -143,6 +157,16 @@ System automatically sets:
   * Previously used doctors
   * Known providers from database
 * Specialization and clinic auto-filled if available
+* **Doctor Card Display**:
+  * Speciality prominently shown beneath Name
+  * Action Icons: Phone 📞 (Direct Call) and Calendar 📅 (Booking)
+* **Appointment Booking Flow**:
+  * Users can view provider availability in a clinic calendar
+  * Select date/time slots for clinic visits
+* **Pharmacy Interaction**:
+  * "Order My Medications" flow integrated into Journey and Medication lists
+  * Priority pharmacy selection (e.g., Hospital de los Valles)
+  * Integrated map search for local providers
 * Multiple doctors allowed per Health Journey (second opinions)
 
 ---
@@ -172,7 +196,20 @@ User confirms:
 * Dosage
 * Frequency
 
-Everything else is pre-filled and editable but optional.
+**9.4 Clinical Status & Risk Indicators**
+
+System dynamically colors medications based on clinical relevance (Requires MiGenomica 360):
+* **Green**: Safe, optimized (e.g., **Carvedilol**).
+* **Orange**: Monitor/Risk (e.g., **Atorvastatin** for Muscle Pain/Myopathy; **Lisinopril** for Kidney value sensitivity).
+* **Red**: Ineffective/Dangerous (e.g., **Plavix** for Genetic Resistance).
+
+**9.5 Subscription Visual Cues**
+* Locked/Unsubscribed categories (e.g., "All Medications") feature a **Blinking Red** background and clear prompt: *"Important information missing. Tap to subscribe."*
+
+**9.5 Pharmacy Ordering**
+
+* One-tap refill/ordering from any medication view
+* Automated pharmacy notification system
 
 ---
 
@@ -215,6 +252,9 @@ System automatically:
 ### 11.1 Upload
 
 * Upload or scan documents (PDF, JPG, PNG)
+* **Nutrigenomica Scanning**:
+  * "Scan here to know if your purchase is healthy"
+  * Mobile scanning flow for grocery/nutrition validation
 
 ### 11.2 Auto-Extraction
 
@@ -244,6 +284,15 @@ User only confirms correctness.
   * Medications
   * Reports
   * Doctor interactions
+* **Vitals Timeline**:
+  * 1-year historical view for all vitals (BP, Glucose, Pulse, Resp Rate)
+  * Visual status indicators (Green/Orange/Red) on graph plots
+* **Organ System Diagnosis Flow (“Your Organs”)**:
+  * Grid-based view of major systems (Cardio, Neuro, Resp, etc.)
+  * **Status Coloring**: Systems appear Red/Pink if associated risks exist.
+  * **Diagnostic Reasoning**:
+    * If Med-related risk: Link to **Health Journey** medication list.
+    * If Vital-related risk: Link to specific vital entry screen (e.g., **Blood Pressure**).
 
 ### 12.2 Smart Language
 
@@ -306,7 +355,11 @@ System auto-adjusts:
 * Soft blues 💙
 * Gentle greens 🌱
 * Warm accents 🌼
-* Avoid harsh reds and clinical whites
+* **Clinical Colors**:
+  * **Red**: High priority/Ineffective/Missed (e.g., Plavix risk)
+  * **Orange**: Medium priority/Monitor (e.g., Statin risk/Kidney values)
+  * **Green**: Normal/Optimized/Effective
+* Avoid harsh reds and clinical whites except where clinically necessary
 
 ### 15.2 Emoji Usage
 
@@ -355,6 +408,20 @@ This SOP ensures the application:
 * Scales globally
 * Maintains strict privacy and trust
 * Builds a lifelong, user-owned health record
+
+---
+
+## 19. Smart Subscription Overlays SOP
+
+### 19.1 MiGenomica 360
+* Provides genetic risk overlays across the app
+* Dynamic coloring of "Plavix" and "Atorvastatin" based on genomic profile
+* Organ system risk mapping (e.g., Cardiovascular/Neurology alerts)
+
+### 19.2 MiGenesys Assist
+* AI-powered health assistant
+* "AI Summary" feature for medical reports and document analysis
+* Proactive clinical alerts and education
 
 ---
 
