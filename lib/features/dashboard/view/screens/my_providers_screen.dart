@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migenesys_poc/features/dashboard/view/screens/provider_map_screen.dart';
+import 'appointment_booking_screen.dart';
 
 class MyProvidersScreen extends StatelessWidget {
   const MyProvidersScreen({super.key});
@@ -14,8 +15,10 @@ class MyProvidersScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _buildProviderCard(context, 'Dr. Sarah Smith', 'Cardiologist', '1.2 miles away'),
-                _buildProviderCard(context, 'Dr. James Doe', 'General Practitioner', '3.5 miles away'),
+                _buildProviderCard(context, 'Dr. Nelson Maldonado', 'Neurologist', '1.2 miles away'),
+                _buildProviderCard(context, 'Dr. Cardidad Davalos', 'Pediatrician', '2.5 miles away'),
+                _buildProviderCard(context, 'Dr. Alvaro Davalos', 'Primary Care', '3.1 miles away'),
+                _buildProviderCard(context, 'Dr. Alberto Cardenas', 'Cardiologist', '4.0 miles away'),
               ],
             ),
           ),
@@ -26,7 +29,7 @@ class MyProvidersScreen extends StatelessWidget {
               height: 56,
               child: ElevatedButton.icon(
                 onPressed: () {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => const ProviderMapScreen()));
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => ProviderMapScreen()));
                 },
                 icon: const Icon(Icons.map),
                 label: const Text('Find a Provider'),
@@ -49,11 +52,22 @@ class MyProvidersScreen extends StatelessWidget {
         leading: CircleAvatar(child: Text(name[4])), // First letter of name
         title: Text(name),
         subtitle: Text('$speciality • $distance'),
-        trailing: IconButton(
-          icon: const Icon(Icons.call, color: Colors.green),
-          onPressed: () {
-             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Calling $name...')));
-          },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.call, color: Colors.green),
+              onPressed: () {
+                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Calling $name...')));
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.calendar_month, color: Color(0xFF64B5F6)),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AppointmentBookingScreen(providerName: name)));
+              },
+            ),
+          ],
         ),
       ),
     );

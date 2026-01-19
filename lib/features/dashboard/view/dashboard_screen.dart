@@ -17,6 +17,7 @@ import 'screens/vitals/respiratory_rate_screen.dart';
 import 'screens/subscription_screen.dart';
 import '../view_model/subscription_provider.dart';
 import 'dart:math' as math;
+import 'screens/nutrigenomica_report_screen.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -93,7 +94,131 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             const Icon(Icons.qr_code_2, size: 150),
             const SizedBox(height: 20),
             ElevatedButton(onPressed: () { Navigator.pop(context); }, child: const Text('Share All Data')),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () { Navigator.pop(context); }, 
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[100], foregroundColor: Colors.blue[900]),
+              child: const Text('Family share 👨‍👩‍👧‍👦')
+            ),
             TextButton(onPressed: () { Navigator.pop(context); }, child: const Text('Choose Data Points')),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCalendarDialog() {
+    final now = DateTime.now();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('My Calendar 📅'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('January ${now.year}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: List.generate(31, (index) {
+                final day = index + 1;
+                final isSpecial = day == 20 || day == 22;
+                return GestureDetector(
+                  onTap: isSpecial ? () {
+                    Navigator.pop(context);
+                    _showAppointmentDetails(day);
+                  } : null,
+                  child: Container(
+                    width: 35,
+                    height: 35,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: isSpecial ? Border.all(color: Colors.red, width: 2) : null,
+                      color: day == now.day ? Colors.blue[100] : null,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text('$day', style: TextStyle(color: isSpecial ? Colors.red : null, fontWeight: isSpecial ? FontWeight.bold : null)),
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAppointmentDetails(int day) {
+    final doctors = ['Dr. Nelson Maldonado', 'Dr. Cardidad Davalos', 'Dr. Alvaro Davalos', 'Dr. Alberto Cardenas'];
+    final doctor = doctors[day % doctors.length];
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Appointment Details'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.person, size: 50, color: Colors.blue[700]),
+            const SizedBox(height: 16),
+            Text('Appointment with $doctor', textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text('Time: 10:30 AM'),
+            const Text('Location: Main Clinic, Tower A'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+        ],
+      ),
+    );
+  }
+
+  void _showAlertsDialog() {
+    final alerts = [
+      'Blood pressure readings higher than normal today.',
+      'Blood glucose check due in 30 minutes.',
+      'Flu vaccination due next week.',
+      'Refill for Atorvastatin is ready.',
+      'Medication alert: Plavix dose missed.',
+    ];
+    alerts.shuffle();
+    final selectedAlerts = alerts.take(3).toList();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Health Alerts 🔔'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ...selectedAlerts.map((alert) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: ListTile(
+                leading: const Icon(Icons.warning_amber_rounded, color: Colors.orange),
+                title: Text(alert, style: const TextStyle(fontSize: 14)),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+            )),
+            const Divider(),
+            const Text('Sign up for premium insights:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SubscriptionScreen(overlayTitle: 'MiGenomica 360')));
+              },
+              child: const Text('Sign up for MiGenomica 360'),
+            ),
+            const SizedBox(height: 4),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SubscriptionScreen(overlayTitle: 'MiGenesys Assist')));
+              },
+              child: const Text('Sign up for MiGenesys Assist'),
+            ),
           ],
         ),
       ),
@@ -236,10 +361,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: const Text('Healthcentral'),
         elevation: 0,
         backgroundColor: Colors.transparent, 
         foregroundColor: Colors.white, 
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.calendar_month),
+              onPressed: _showCalendarDialog,
+              tooltip: 'Calendar',
+            ),
+            IconButton(
+              icon: const Icon(Icons.notifications_active),
+              onPressed: _showAlertsDialog,
+              tooltip: 'Alerts',
+            ),
+          ],
+        ),
+        leadingWidth: 100,
         actions: [
           // Allergy Icon
           Padding(
@@ -347,6 +488,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         _getRespiratoryColor(vitalsState.respiratoryRate),
                         () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RespiratoryRateScreen())),
                         math.pi / 2, 
+                        130
+                      ),
+                      // Nutrition (Top Center - Orbiting)
+                      _buildOrbitingIcon(
+                        Icons.restaurant, 'Nutrition', 
+                        Colors.teal,
+                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NutrigenomicaReportScreen())),
+                        -math.pi / 2, 
                         130
                       ),
                     ],

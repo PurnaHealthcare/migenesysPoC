@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'subscription_screen.dart';
 
 class MyDocsScreen extends StatelessWidget {
   const MyDocsScreen({super.key});
@@ -95,6 +96,19 @@ class MyDocsScreen extends StatelessWidget {
               label: const Text('Upload Document'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SubscriptionScreen(overlayTitle: 'MiGenesys Assist')));
+              },
+              icon: const Icon(Icons.auto_awesome),
+              label: const Text('AI Summary ✨'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                backgroundColor: Colors.blue[50],
+                foregroundColor: Colors.blue[900],
               ),
             ),
           ],
