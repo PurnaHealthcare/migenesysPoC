@@ -42,6 +42,12 @@ class _AddJourneyDialogState extends State<AddJourneyDialog> {
       'dosage': '500mg',
       'freq': 'Twice daily',
     },
+    {
+      'brand': 'Plavix',
+      'generic': 'Clopidogrel',
+      'dosage': '75mg',
+      'freq': 'Once daily',
+    },
   ];
 
   void _onMedicationSelected(Map<String, String> med) {

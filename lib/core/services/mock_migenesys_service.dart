@@ -9,6 +9,22 @@ class MockMiGenesysService implements IMiGenesysService {
   final _uuid = const Uuid();
 
   MockMiGenesysService() {
+    _journeys.add(
+      HealthJourney(
+        id: _uuid.v4(),
+        title: 'Myocardial Infarction',
+        startDate: DateTime.now().subtract(const Duration(days: 10)),
+        period: 'Ongoing',
+        medications: [
+          Medication(
+            brandName: 'Plavix',
+            genericName: 'Clopidogrel',
+            dosage: '75mg',
+            frequency: 'Once daily',
+          ),
+        ],
+      ),
+    );
     _controller.add(List.unmodifiable(_journeys));
   }
 

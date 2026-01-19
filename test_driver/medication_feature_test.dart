@@ -40,18 +40,59 @@ void main() {
         final submitBtn = find.byValueKey('add_journey_submit_btn');
         final fab = find.byValueKey('add_journey_fab');
 
-        // 1. Wait for Home Screen (Welcome)
-        print('waiting for welcome screen...');
-        await driver.waitFor(startJourneyBtn);
-        await humanDelay(); // Pause to look at screen
-        await driver.tap(startJourneyBtn);
+        // 1. Login Flow
+        print('waiting for login screen...');
+        final emailField = find.byValueKey('email_field');
+        final passField = find.byValueKey('password_field');
+        final loginBtn = find.byValueKey('login_btn');
 
-        // 2. Open Add Journey Dialog (from HealthJourneyScreen)
-        print('navigating to health journey screen...');
-        final startFirstJourneyBtn = find.text('Start Your First Journey');
-        await driver.waitFor(startFirstJourneyBtn);
+        await driver.waitFor(emailField);
+        await driver.tap(emailField);
+        await driver.enterText('test@example.com');
+        await humanDelay(500);
+
+        await driver.tap(passField);
+        await driver.enterText('password');
+        await humanDelay(500);
+
+        await driver.tap(loginBtn);
+        await humanDelay(2000); // 1s network delay + animation
+
+        // 2. Navigate to Health Journeys from Dashboard
+        print('dashboard loaded. navigating to health journeys...');
+        final viewJourneysBtn = find.text('View Health Journeys');
+        
+        // You might need to scroll down if the button is not visible
+        await driver.scrollUntilVisible(
+          find.byType('SingleChildScrollView'),
+          viewJourneysBtn,
+          dyScroll: -300.0,
+        );
+
+        await driver.tap(viewJourneysBtn);
         await humanDelay();
-        await driver.tap(startFirstJourneyBtn);
+
+        // 3. Verify Health Journey Screen Content
+        print('waiting for health journey screen content...');
+        // Since we have data, we look for the main content
+        await driver.waitFor(find.text('My Journeys'));
+        await humanDelay(); 
+
+        // 2. Verify Pre-existing Journey (Myocardial Infarction)
+        print('verifying pre-existing journey...');
+        final preExistingJourney = find.text('Myocardial Infarction');
+        await driver.waitFor(preExistingJourney);
+        
+        // Expand it to check for Plavix
+        await driver.tap(preExistingJourney);
+        await humanDelay();
+        await driver.waitFor(find.text('Plavix'));
+        await driver.tap(preExistingJourney); // Collapse it back
+        await humanDelay();
+
+        // 3. Open Add Journey Dialog via FAB
+        print('opening dialog via FAB...');
+        await driver.tap(fab);
 
         // 3. Wait for Dialog (Synchronized)
         print('opening dialog...');
@@ -110,6 +151,34 @@ void main() {
         await driver.tap(journeyCard); // Expand
         await humanDelay();
         await driver.waitFor(find.text('Medications 💊'));
+        await humanDelay(1000); 
+
+        // Part 2 (Adding Myocardial Infarction) is removed since it is now pre-populated.
+        // We proceed directly to verification.
+
+        // ---------------------------------------------------------
+        // PART 3: Verify "All Medications" Section
+        // ---------------------------------------------------------
+        print('Verifying All Medications section...');
+        
+        // Scroll to bottom to ensure "All Medications" is visible
+        final allMedsHeader = find.text('All Medications 💊');
+        await driver.scrollUntilVisible(
+          find.byType('CustomScrollView'), // Scroll the main view
+          allMedsHeader,
+          dyScroll: -300.0, // Scroll down
+        );
+        
+        await driver.waitFor(allMedsHeader);
+        
+        // Verify Plavix is in the list
+        final plavixCard = find.text('Plavix');
+        await driver.waitFor(plavixCard);
+        
+        // Verify Norvasc is in the list
+        final norvascCard = find.text('Norvasc');
+        await driver.waitFor(norvascCard);
+
         await humanDelay(3000); // Final gaze
       },
       timeout: const Timeout(Duration(minutes: 5)),
