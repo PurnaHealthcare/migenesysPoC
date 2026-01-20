@@ -67,6 +67,12 @@ This SOP defines the standardized processes, user flows, data handling principle
 * Handles inventory, licensing, or distribution aspects
 * **App Name**: MiGenesys Partner
 
+### 3.5 Pharmacist (MiGenesys Pharma)
+* Independent or affiliated with a Care Organization.
+* Receives medication orders from Patients ("Send for Filling").
+* Can view relevant Prescriptions and Allergies.
+* **App Name**: MiGenesys Pharma
+
 ---
 
 ## 4. Platform & Consistency Standards
@@ -465,14 +471,75 @@ Just tell me the next step 💙
   * Digital Signature for Reports.
 
 ### 19.2 MiGenesys Care (Organization)
-* **Goal**: Practice management and oversight.
+* **Goal**: Practice management, staff oversight, and patient administration.
 * **Key Features**:
+  * **Staff Management**: Add Physicians and Support Staff.
+  * **Role-Based Access Control (RBAC)**:
+    *   **Medical Professional** (Physician, PA, Nurse): Full access to edit **Clinical Information** (Vitals, Lab Results, Diagnosis).
+    *   **Non-Medical Staff** (Clerk, Admin): Access to edit **Demographics Only** (Name, Address, Phone). **Read-only** access to Clinical Information (or hidden based on privacy settings).
+  * **Physician Onboarding**:
+    *   If Physician exists in DocAssist -> Send In-App Invite + Email.
+    *   If new -> Send Email Invite.
+  * **Patient Oversight (Directory & CS)**:
+    *   **Search**: By Name, Email, Phone, or ID.
+    *   **Admin Tab**: Manage Demographics, View Visit History, Schedule Visits.
+    *   **Clinical Tab**: Restricted by RBAC (Medical Only).
+  * **Advanced Analytics & AI**:
+    *   **Multi-Factor Scores**: Efficiency (Wait Times), Patient Sat, Provider Sat.
+    *   **MiGenesys Assist (AI)**: Interactive chat for workflow improvements ("Revenue at Risk").
+    *   **Smart Alerts**: Critical threshold notifications (Red Badge/Banner) for high-bar events (e.g., Wait Time > 45m).
+  * **Audit & Compliance**:
+    *   **Event Logging**: All PHI access events (`ACCESS_PHI`) by Medical staff are logged.
+    *   **Usage Tracking**: Screen views and feature usage (e.g., Scheduling) are tracked.
   * Physician Directory management.
   * Appointment/Queue Management.
   * Billing/Subscription status.
+
 
 ### 19.3 MiGenesys Partner (Distributor)
 * **Goal**: Sales and distribution tracking.
 * **Key Features**:
   * License Management.
   * Order History.
+
+### 19.4 MiGenesys Pharma (Pharmacist)
+* **Goal**: Medication fulfillment and safety checks.
+* **Key Features**:
+  * **Order Queue**: View Incoming Prescriptions/Refill Requests from Patients.
+  * **Safety Check**: Automatic Drug Interaction warnings (shared with Physician view).
+  * **Status Updates**: Notify Patient (Received -> Filling -> Ready).
+  * **Org Integration**: Can be linked to a `MiGenesys Care` Org as staff.
+
+### 19.5 Service Portal (Customer Service - MiGenesys Care)
+* **Goal**: Efficient appointment scheduling and patient lookup for Customer Service staff.
+* **Key Features**:
+  * **Multi-Specialty Filtering**: Filter providers by specialty (General Practice, Cardiology, Pediatrics, etc.).
+  * **Provider Search**: Real-time search by provider name.
+  * **7-Day Calendar View**: Quick date selection with extended date picker.
+  * **Availability Slots**: View and book available slots by provider.
+  * **Patient Directory**: Search and view patient records (demographics only).
+  * **Responsive Layout**: Optimized for both phone and tablet devices.
+* **Access Control**: Customer Service staff can view demographics but not clinical data (RBAC enforced).
+
+### 19.6 Medical Dashboard (Medical Professional - MiGenesys Care)
+* **Goal**: Quick access to assigned patients and clinical workflows.
+* **Key Features**:
+  * **My Patients**: List of patients assigned to the logged-in provider.
+  * **Quick Actions**: Fast access to common tasks (e.g., View History, Add Notes).
+  * **Organization Context**: Provider sees only patients from their assigned organization.
+
+---
+
+## 20. Technical Requirements
+
+### 20.1 Test Coverage
+* **Smoke Tests**: All apps launch without error.
+* **Role-Based Routing**: Login with different roles routes to appropriate dashboards.
+* **Analytics Logging**: Screen views and PHI access are logged for compliance.
+* **RBAC Enforcement**: Clinical data access restricted by role.
+
+### 20.2 Development Standards
+* **State Management**: flutter_riverpod for reactive state.
+* **Analytics**: Centralized AnalyticsService with debugPrint in debug mode.
+* **Mock Data**: MockData class for centralized demo data.
+* **Responsive Design**: LayoutBuilder for adaptive layouts.

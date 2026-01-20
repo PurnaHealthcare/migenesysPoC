@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:migenesys_poc/core/theme/app_theme.dart';
-import 'package:migenesys_poc/features/org_dashboard/view/org_dashboard_screen.dart';
+import 'package:migenesys_poc/features/org_dashboard/view/care_login_screen.dart';
 
 class MiGenesysCareApp extends StatelessWidget {
   const MiGenesysCareApp({super.key});
@@ -10,8 +9,16 @@ class MiGenesysCareApp extends StatelessWidget {
     return MaterialApp(
       title: 'MiGenesys Care',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      home: const OrgDashboardScreen(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF1565C0), // Enterprise Blue
+          primary: const Color(0xFF1565C0),
+          secondary: const Color(0xFF0D47A1),
+        ),
+        useMaterial3: true,
+        fontFamily: 'Roboto',
+      ),
+      home: const CareLoginScreen(),
     );
   }
 }
