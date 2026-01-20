@@ -17,7 +17,11 @@ final serviceSpecialtiesProvider = FutureProvider.family<List<String>, String>((
 });
 
 /// Provider for available appointment slots by provider IDs.
-final serviceAvailabilityProvider = FutureProvider.family<List<AvailabilityModel>, Set<String>>((ref, providerIds) async {
+/// 
+/// Uses comma-separated string of provider IDs for proper caching.
+final serviceAvailabilityProvider = FutureProvider.family<List<AvailabilityModel>, String>((ref, providerIdsStr) async {
   final repository = ref.watch(availabilityRepositoryProvider);
+  if (providerIdsStr.isEmpty) return [];
+  final providerIds = providerIdsStr.split(',').toSet();
   return repository.getAvailableSlots(providerIds);
 });
