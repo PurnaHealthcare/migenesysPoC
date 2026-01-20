@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/patient_detail_screen.dart';
+import 'package:migenesys_poc/core/data/mock_data.dart';
 
 class PatientListScreen extends StatefulWidget {
   const PatientListScreen({super.key});
@@ -54,12 +55,15 @@ class _PatientListScreenState extends State<PatientListScreen> {
             ),
           ),
           Expanded(
-            child: ListView(
-              children: [
-                ListTile(
-                  leading: const CircleAvatar(child: Text('JD')),
-                  title: const Text('John Doe'),
-                  subtitle: const Text('ID: PAT-001 • In Waiting Room'),
+            child: ListView.builder(
+              itemCount: MockData.patients.length,
+              itemBuilder: (context, index) {
+                final patient = MockData.patients[index];
+                final initials = patient['name'].split(' ').take(2).map((e) => e[0]).join();
+                return ListTile(
+                  leading: CircleAvatar(child: Text(initials)),
+                  title: Text(patient['name']),
+                  subtitle: Text('ID: ${patient['id']} • ${patient['status']}'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     Navigator.push(
@@ -69,22 +73,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
                       ),
                     );
                   },
-                ),
-                ListTile(
-                  leading: const CircleAvatar(child: Text('AS')),
-                  title: const Text('Alice Smith'),
-                  subtitle: const Text('ID: PAT-002 • Completed'),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PatientDetailScreen(isMedicalProfessional: _simulateMedicalRole),
-                      ),
-                    );
-                  },
-                ),
-              ],
+                );
+              },
             ),
           ),
         ],

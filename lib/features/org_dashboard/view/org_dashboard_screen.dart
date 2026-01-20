@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:migenesys_poc/core/data/mock_data.dart';
 
 class OrgDashboardScreen extends StatelessWidget {
   const OrgDashboardScreen({super.key});
 
-  // Mock Data for Analytics
-  static final List<Map<String, dynamic>> _scores = [
-    {'title': 'Efficiency Score', 'value': '85/100', 'color': Colors.blue},
-    {'title': 'Patient Sat.', 'value': '4.8/5.0', 'color': Colors.green},
-    {'title': 'Provider Sat.', 'value': '92/100', 'color': Colors.orange},
-  ];
 
-  static final List<Map<String, dynamic>> _kpis = [
-    {'title': 'Unique Visits', 'value': '142', 'change': '+12%', 'icon': Icons.people},
-    {'title': 'Avg Wait Time', 'value': '18m', 'change': '-2m', 'icon': Icons.timer},
-    {'title': 'New Patients', 'value': '24', 'change': '+5%', 'icon': Icons.person_add},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +80,7 @@ class OrgDashboardScreen extends StatelessWidget {
             const SizedBox(height: 16),
             // Multi-Factor Scores
             Row(
-              children: _scores.map((score) => Expanded(
+              children: MockData.dashboardScores.map((score) => Expanded(
                 child: Card(
                   color: (score['color'] as Color).withOpacity(0.1),
                   elevation: 0,
@@ -118,9 +108,9 @@ class OrgDashboardScreen extends StatelessWidget {
                 mainAxisSpacing: 16,
                 childAspectRatio: 1.5,
               ),
-              itemCount: _kpis.length,
+              itemCount: MockData.dashboardKpis.length,
               itemBuilder: (context, index) {
-                final kpi = _kpis[index];
+                final kpi = MockData.dashboardKpis[index];
                 return Card(
                   elevation: 2,
                   child: Padding(
