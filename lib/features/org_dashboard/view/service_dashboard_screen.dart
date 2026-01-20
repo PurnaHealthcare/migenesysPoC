@@ -264,7 +264,9 @@ class _ServiceDashboardScreenState extends ConsumerState<ServiceDashboardScreen>
   }
 
   Widget _buildSlotsList(Set<String> providerIds, List<StaffModel> providers) {
-    final slotsAsync = ref.watch(serviceAvailabilityProvider(providerIds));
+    // Convert Set to sorted comma-separated string for proper caching
+    final providerIdsStr = (providerIds.toList()..sort()).join(',');
+    final slotsAsync = ref.watch(serviceAvailabilityProvider(providerIdsStr));
 
     return slotsAsync.when(
       data: (slots) {
