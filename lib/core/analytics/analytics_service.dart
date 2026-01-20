@@ -41,4 +41,9 @@ class AnalyticsService {
       metadata: details,
     ));
   }
+
+  // Clear events for test isolation
+  void clearEvents() {
+    _recentEvents.clear();
+  }
 }
