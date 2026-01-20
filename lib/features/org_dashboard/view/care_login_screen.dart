@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/care_root_screen.dart';
+import 'package:migenesys_poc/core/data/mock_data.dart';
+import 'package:migenesys_poc/features/org_dashboard/view/service_dashboard_screen.dart';
+import 'package:migenesys_poc/features/org_dashboard/view/medical_dashboard_screen.dart';
 
 class CareLoginScreen extends StatefulWidget {
   const CareLoginScreen({super.key});
@@ -9,7 +12,7 @@ class CareLoginScreen extends StatefulWidget {
 }
 
 class _CareLoginScreenState extends State<CareLoginScreen> {
-  final _emailController = TextEditingController(text: 'test@example.com');
+  final _emailController = TextEditingController(text: 'alice@migenesys.com');
   final _passwordController = TextEditingController(text: 'password');
   bool _isLoading = false;
 
@@ -17,11 +20,45 @@ class _CareLoginScreenState extends State<CareLoginScreen> {
     setState(() => _isLoading = true);
     // Mock Delay
     await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const CareRootScreen()),
+    
+    if (!mounted) return;
+
+    final email = _emailController.text.trim();
+    
+    // Find user in MockData
+    try {
+      final user = MockData.staffList.firstWhere(
+        (u) => u.email.toLowerCase() == email.toLowerCase(),
+        orElse: () => throw Exception('User not found'),
       );
+
+      // Routing Logic
+      if (user.role == 'Customer Service') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ServiceDashboardScreen(user: user)),
+        );
+      } else if (user.isMedicalProfessional && user.role != 'Practice Manager') {
+        // Medical Professionals (Doctors, Nurses, Specialists) but excluding Admins who might be medical
+        // Note: Logic can be refined. For now, if role is explicitly 'Physician', 'Nurse', 'Specialist' -> Medical Dashboard
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MedicalDashboardScreen(user: user)),
+        );
+      } else {
+        // Default to Admin/Management View (CareRootScreen)
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CareRootScreen()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid Credentials or User not found')),
+        );
+        setState(() => _isLoading = false);
+      }
     }
   }
 

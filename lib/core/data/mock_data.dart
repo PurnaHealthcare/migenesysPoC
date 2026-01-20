@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../features/org_dashboard/domain/staff_model.dart';
+import '../../features/org_dashboard/domain/organization_model.dart';
+import '../../features/org_dashboard/domain/availability_model.dart';
 import '../../core/analytics/analytics_event.dart';
 
 class MockData {
-  // --- Org Dashboard Data ---
+  // --- Organizations ---
+  static final List<OrganizationModel> organizations = [
+    OrganizationModel(id: 'org1', name: 'Downtown Clinic', type: 'Clinic'),
+    OrganizationModel(id: 'org2', name: 'Specialty Center', type: 'Specialty Center'),
+  ];
+
+  // --- Org Dashboard Data (Mock - potentially filtered by Org in future) ---
   static const List<Map<String, dynamic>> dashboardScores = [
     {'title': 'Efficiency Score', 'value': '88/100', 'color': Colors.blue, 'trend': '+2.5%'},
     {'title': 'Patient Satisfaction', 'value': '4.9/5.0', 'color': Colors.green, 'trend': '+0.1'},
@@ -28,7 +36,7 @@ class MockData {
       email: 's.connor@migenesys.com',
       role: 'Physician',
       isMedicalProfessional: true,
-      isPharmacist: false,
+      orgId: 'org1',
     ),
     StaffModel(
       id: 's2',
@@ -36,7 +44,7 @@ class MockData {
       email: 'j.smith@migenesys.com',
       role: 'Nurse',
       isMedicalProfessional: true,
-      isPharmacist: false,
+      orgId: 'org1',
     ),
     StaffModel(
       id: 's3',
@@ -44,7 +52,7 @@ class MockData {
       email: 'alice@migenesys.com',
       role: 'Practice Manager',
       isMedicalProfessional: false,
-      isPharmacist: false,
+      orgId: 'org1',
     ),
     StaffModel(
       id: 's4',
@@ -53,6 +61,7 @@ class MockData {
       role: 'Pharmacist',
       isMedicalProfessional: true,
       isPharmacist: true,
+      orgId: 'org1',
     ),
      StaffModel(
       id: 's5',
@@ -60,8 +69,41 @@ class MockData {
       email: 'e.chen@migenesys.com',
       role: 'Specialist',
       isMedicalProfessional: true,
-      isPharmacist: false,
+      orgId: 'org2',
     ),
+    // New Test Users for Phase 2
+    StaffModel(
+      id: 's6',
+      name: 'Service Agent',
+      email: 'service@example.com',
+      role: 'Customer Service',
+      isMedicalProfessional: false,
+      orgId: 'org1', // Downtown Clinic
+    ),
+    StaffModel(
+      id: 's7',
+      name: 'Dr. Medical Pro',
+      email: 'med@example.com',
+      role: 'Physician',
+      isMedicalProfessional: true,
+      orgId: 'org2', // Specialty Center
+    ),
+  ];
+
+  // --- Availability Data (Mock) ---
+  static final List<AvailabilityModel> availability = [
+    // Dr. Connor (Org 1)
+    AvailabilityModel(providerId: 's1', startTime: DateTime.now().add(const Duration(hours: 1)), durationMinutes: 30),
+    AvailabilityModel(providerId: 's1', startTime: DateTime.now().add(const Duration(hours: 2)), durationMinutes: 30),
+    AvailabilityModel(providerId: 's1', startTime: DateTime.now().add(const Duration(hours: 3)), durationMinutes: 30, isBooked: true),
+    
+    // Dr. Chen (Org 2) - Medical Pro
+    AvailabilityModel(providerId: 's5', startTime: DateTime.now().add(const Duration(hours: 1)), durationMinutes: 45),
+    AvailabilityModel(providerId: 's5', startTime: DateTime.now().add(const Duration(hours: 3)), durationMinutes: 45),
+    
+    // Dr. Medical Pro (Org 2)
+    AvailabilityModel(providerId: 's7', startTime: DateTime.now().add(const Duration(days: 1, hours: 9)), durationMinutes: 60),
+    AvailabilityModel(providerId: 's7', startTime: DateTime.now().add(const Duration(days: 1, hours: 11)), durationMinutes: 60),
   ];
 
   // --- Patient Data ---

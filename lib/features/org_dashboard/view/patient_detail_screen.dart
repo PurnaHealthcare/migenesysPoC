@@ -7,7 +7,8 @@ import 'package:migenesys_poc/core/analytics/analytics_event.dart';
 
 class PatientDetailScreen extends StatefulWidget {
   final bool isMedicalProfessional; // Logic to derive view
-  const PatientDetailScreen({super.key, required this.isMedicalProfessional});
+  final String? patientId;
+  const PatientDetailScreen({super.key, required this.isMedicalProfessional, this.patientId});
 
   @override
   State<PatientDetailScreen> createState() => _PatientDetailScreenState();
@@ -37,7 +38,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> with SingleTi
           action: 'ACCESS_PHI',
           category: 'COMPLIANCE',
           role: 'Medical',
-          metadata: {'patient_id': 'MOCK_ID'}, // In real app, pass ID
+          metadata: {'patient_id': widget.patientId ?? 'MOCK_ID'}, // In real app, pass ID
         ));
       }
     }

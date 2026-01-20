@@ -5,6 +5,8 @@ class StaffModel {
   final String role; // 'Admin', 'Clerk', etc.
   final bool isMedicalProfessional;
   final bool isPharmacist;
+  final String orgId;
+  final String? avatar;
 
   StaffModel({
     required this.id,
@@ -13,6 +15,8 @@ class StaffModel {
     required this.role,
     required this.isMedicalProfessional,
     this.isPharmacist = false,
+    required this.orgId,
+    this.avatar,
   });
 
   // Factory for json serialization
@@ -24,6 +28,8 @@ class StaffModel {
       role: json['role'] as String,
       isMedicalProfessional: json['isMedicalProfessional'] as bool,
       isPharmacist: (json['isPharmacist'] ?? false) as bool,
+      orgId: json['orgId'] as String,
+      avatar: json['avatar'] as String?,
     );
   }
 
@@ -35,6 +41,8 @@ class StaffModel {
       'role': role,
       'isMedicalProfessional': isMedicalProfessional,
       'isPharmacist': isPharmacist,
+      'orgId': orgId,
+      'avatar': avatar,
     };
   }
 
@@ -45,6 +53,8 @@ class StaffModel {
     String? role,
     bool? isMedicalProfessional,
     bool? isPharmacist,
+    String? orgId,
+    String? avatar,
   }) {
     return StaffModel(
       id: id ?? this.id,
@@ -53,6 +63,8 @@ class StaffModel {
       role: role ?? this.role,
       isMedicalProfessional: isMedicalProfessional ?? this.isMedicalProfessional,
       isPharmacist: isPharmacist ?? this.isPharmacist,
+      orgId: orgId ?? this.orgId,
+      avatar: avatar ?? this.avatar,
     );
   }
 }

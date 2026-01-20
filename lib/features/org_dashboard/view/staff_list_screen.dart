@@ -12,8 +12,8 @@ class StaffListScreen extends StatefulWidget {
 class _StaffListScreenState extends State<StaffListScreen> {
   // Mock Data
   final List<StaffModel> _staff = [
-    StaffModel(id: '1', name: 'Dr. Smith', email: 'smith@clinic.com', role: 'Physician', isMedicalProfessional: true),
-    StaffModel(id: '2', name: 'Jane Admin', email: 'jane@clinic.com', role: 'Clerk', isMedicalProfessional: false),
+    StaffModel(id: '1', name: 'Dr. Smith', email: 'smith@clinic.com', role: 'Physician', isMedicalProfessional: true, orgId: 'org1'),
+    StaffModel(id: '2', name: 'Jane Admin', email: 'jane@clinic.com', role: 'Clerk', isMedicalProfessional: false, orgId: 'org1'),
   ];
 
   @override
