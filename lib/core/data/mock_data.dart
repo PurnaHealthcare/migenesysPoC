@@ -37,6 +37,7 @@ class MockData {
       role: 'Physician',
       isMedicalProfessional: true,
       orgId: 'org1',
+      specialty: 'General Practice',
     ),
     StaffModel(
       id: 's2',
@@ -45,6 +46,7 @@ class MockData {
       role: 'Nurse',
       isMedicalProfessional: true,
       orgId: 'org1',
+      specialty: 'General Practice',
     ),
     StaffModel(
       id: 's3',
@@ -62,14 +64,16 @@ class MockData {
       isMedicalProfessional: true,
       isPharmacist: true,
       orgId: 'org1',
+      specialty: 'Pharmacy',
     ),
-     StaffModel(
+    StaffModel(
       id: 's5',
       name: 'Dr. Emily Chen',
       email: 'e.chen@migenesys.com',
       role: 'Specialist',
       isMedicalProfessional: true,
       orgId: 'org2',
+      specialty: 'Cardiology',
     ),
     // New Test Users for Phase 2
     StaffModel(
@@ -87,23 +91,57 @@ class MockData {
       role: 'Physician',
       isMedicalProfessional: true,
       orgId: 'org2', // Specialty Center
+      specialty: 'Cardiology',
+    ),
+    // Additional providers for multi-specialty demo
+    StaffModel(
+      id: 's8',
+      name: 'Dr. Lisa Patel',
+      email: 'l.patel@migenesys.com',
+      role: 'Physician',
+      isMedicalProfessional: true,
+      orgId: 'org1',
+      specialty: 'Pediatrics',
+    ),
+    StaffModel(
+      id: 's9',
+      name: 'Dr. James Wilson',
+      email: 'j.wilson@migenesys.com',
+      role: 'Physician',
+      isMedicalProfessional: true,
+      orgId: 'org1',
+      specialty: 'Cardiology',
     ),
   ];
 
   // --- Availability Data (Mock) ---
   static final List<AvailabilityModel> availability = [
-    // Dr. Connor (Org 1)
+    // Dr. Connor (Org 1 - General Practice)
     AvailabilityModel(providerId: 's1', startTime: DateTime.now().add(const Duration(hours: 1)), durationMinutes: 30),
     AvailabilityModel(providerId: 's1', startTime: DateTime.now().add(const Duration(hours: 2)), durationMinutes: 30),
     AvailabilityModel(providerId: 's1', startTime: DateTime.now().add(const Duration(hours: 3)), durationMinutes: 30, isBooked: true),
+    AvailabilityModel(providerId: 's1', startTime: DateTime.now().add(const Duration(days: 1, hours: 9)), durationMinutes: 30),
+    AvailabilityModel(providerId: 's1', startTime: DateTime.now().add(const Duration(days: 1, hours: 10)), durationMinutes: 30),
     
-    // Dr. Chen (Org 2) - Medical Pro
+    // Dr. Chen (Org 2 - Cardiology)
     AvailabilityModel(providerId: 's5', startTime: DateTime.now().add(const Duration(hours: 1)), durationMinutes: 45),
     AvailabilityModel(providerId: 's5', startTime: DateTime.now().add(const Duration(hours: 3)), durationMinutes: 45),
     
-    // Dr. Medical Pro (Org 2)
+    // Dr. Medical Pro (Org 2 - Cardiology)
     AvailabilityModel(providerId: 's7', startTime: DateTime.now().add(const Duration(days: 1, hours: 9)), durationMinutes: 60),
     AvailabilityModel(providerId: 's7', startTime: DateTime.now().add(const Duration(days: 1, hours: 11)), durationMinutes: 60),
+    
+    // Dr. Lisa Patel (Org 1 - Pediatrics)
+    AvailabilityModel(providerId: 's8', startTime: DateTime.now().add(const Duration(hours: 2)), durationMinutes: 30),
+    AvailabilityModel(providerId: 's8', startTime: DateTime.now().add(const Duration(hours: 4)), durationMinutes: 30),
+    AvailabilityModel(providerId: 's8', startTime: DateTime.now().add(const Duration(days: 1, hours: 14)), durationMinutes: 30),
+    AvailabilityModel(providerId: 's8', startTime: DateTime.now().add(const Duration(days: 2, hours: 9)), durationMinutes: 30),
+    
+    // Dr. James Wilson (Org 1 - Cardiology)
+    AvailabilityModel(providerId: 's9', startTime: DateTime.now().add(const Duration(hours: 1)), durationMinutes: 45),
+    AvailabilityModel(providerId: 's9', startTime: DateTime.now().add(const Duration(hours: 3)), durationMinutes: 45),
+    AvailabilityModel(providerId: 's9', startTime: DateTime.now().add(const Duration(days: 1, hours: 10)), durationMinutes: 45),
+    AvailabilityModel(providerId: 's9', startTime: DateTime.now().add(const Duration(days: 2, hours: 11)), durationMinutes: 45),
   ];
 
   // --- Patient Data ---

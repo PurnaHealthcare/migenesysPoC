@@ -7,6 +7,7 @@ class StaffModel {
   final bool isPharmacist;
   final String orgId;
   final String? avatar;
+  final String? specialty; // 'Cardiology', 'General Practice', 'Pediatrics', etc.
 
   StaffModel({
     required this.id,
@@ -17,6 +18,7 @@ class StaffModel {
     this.isPharmacist = false,
     required this.orgId,
     this.avatar,
+    this.specialty,
   });
 
   // Factory for json serialization
@@ -30,6 +32,7 @@ class StaffModel {
       isPharmacist: (json['isPharmacist'] ?? false) as bool,
       orgId: json['orgId'] as String,
       avatar: json['avatar'] as String?,
+      specialty: json['specialty'] as String?,
     );
   }
 
@@ -43,6 +46,7 @@ class StaffModel {
       'isPharmacist': isPharmacist,
       'orgId': orgId,
       'avatar': avatar,
+      'specialty': specialty,
     };
   }
 
@@ -55,6 +59,7 @@ class StaffModel {
     bool? isPharmacist,
     String? orgId,
     String? avatar,
+    String? specialty,
   }) {
     return StaffModel(
       id: id ?? this.id,
@@ -65,6 +70,7 @@ class StaffModel {
       isPharmacist: isPharmacist ?? this.isPharmacist,
       orgId: orgId ?? this.orgId,
       avatar: avatar ?? this.avatar,
+      specialty: specialty ?? this.specialty,
     );
   }
 }
