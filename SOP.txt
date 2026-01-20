@@ -48,6 +48,24 @@ This SOP defines the standardized processes, user flows, data handling principle
 * Sole owner of all personal health data
 * Can create, edit, view, export, or delete their data
 * No other users or administrators can view PHI
+* **App Name**: MiGenesys Life
+
+### 3.2 Physician (DocAssist)
+* Invited by the Patient (End User)
+* Can view specific Health Journeys shared by the patient
+* Can prescribe medications and add notes to the journey
+* **App Name**: DocAssist
+
+### 3.3 Organization (MiGenesys Care)
+* Healthcare Organization or Clinic
+* Manages list of Physicians
+* View aggregated (anonymized) statistics or patient-specific data *only if explicitly shared*
+* **App Name**: MiGenesys Care
+
+### 3.4 Distributor/Reseller (MiGenesys Partner)
+* Manages B2B relationship with MiGenesys
+* Handles inventory, licensing, or distribution aspects
+* **App Name**: MiGenesys Partner
 
 ---
 
@@ -367,3 +385,27 @@ If you want next, I can:
 * Create a **compliance-ready documentation pack**
 
 Just tell me the next step 💙
+
+---
+
+## 19. Role-Specific Workflows (Appendix)
+
+### 19.1 DocAssist (Physician)
+* **Goal**: Efficiently manage patient cases and prescriptions.
+* **Key Features**:
+  * "My Patients" Dashboard.
+  * Rapid Prescription Entry (Brand auto-complete).
+  * Digital Signature for Reports.
+
+### 19.2 MiGenesys Care (Organization)
+* **Goal**: Practice management and oversight.
+* **Key Features**:
+  * Physician Directory management.
+  * Appointment/Queue Management.
+  * Billing/Subscription status.
+
+### 19.3 MiGenesys Partner (Distributor)
+* **Goal**: Sales and distribution tracking.
+* **Key Features**:
+  * License Management.
+  * Order History.
