@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/org_dashboard_screen.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/staff_list_screen.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/patient_list_screen.dart';
+import 'package:migenesys_poc/features/org_dashboard/view/settings_screen.dart';
 import 'package:migenesys_poc/core/analytics/analytics_service.dart';
 import 'package:migenesys_poc/core/data/mock_data.dart';
 
@@ -22,13 +23,14 @@ class _CareRootScreenState extends State<CareRootScreen> {
     const OrgDashboardScreen(), // Will contain Analytics
     const StaffListScreen(),    // Implemented
     const PatientListScreen(),  // Patient Oversight
-
+    const SettingsScreen(),     // Placeholder
   ];
 
   final List<String> _titles = [
     'Practice Analytics',
     'Staff Management',
     'Patient Oversight',
+    'Settings',
   ];
 
   @override

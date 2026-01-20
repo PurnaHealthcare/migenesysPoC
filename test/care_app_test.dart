@@ -20,6 +20,17 @@ void main() {
       
       // Find Chart Placeholder
       expect(find.text('Visits by Specialty'), findsOneWidget);
+
+      // Open Drawer
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle();
+
+      // Find and Tap Settings
+      await tester.tap(find.text('Settings'));
+      await tester.pumpAndSettle();
+
+      // Verify Settings Screen behavior (no crash)
+      expect(find.text('App Settings'), findsOneWidget);
     });
 
     testWidgets('Patient Detail Screen - RBAC Logic', (WidgetTester tester) async {
