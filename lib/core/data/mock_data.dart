@@ -6,8 +6,8 @@ class MockData {
   // --- Org Dashboard Data ---
   static const List<Map<String, dynamic>> dashboardScores = [
     {'title': 'Efficiency Score', 'value': '88/100', 'color': Colors.blue, 'trend': '+2.5%'},
-    {'title': 'Patient Sat.', 'value': '4.9/5.0', 'color': Colors.green, 'trend': '+0.1'},
-    {'title': 'Provider Sat.', 'value': '94/100', 'color': Colors.orange, 'trend': '+1.2%'},
+    {'title': 'Patient Satisfaction', 'value': '4.9/5.0', 'color': Colors.green, 'trend': '+0.1'},
+    {'title': 'Provider Satisfaction', 'value': '94/100', 'color': Colors.orange, 'trend': '+1.2%'},
   ];
 
   static const List<Map<String, dynamic>> dashboardKpis = [

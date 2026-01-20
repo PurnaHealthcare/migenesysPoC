@@ -20,6 +20,7 @@ class OrgDashboardScreen extends StatelessWidget {
     const String alertMessage = 'CRITICAL: Cardiology Wait Times > 45m. Immediate action required.';
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +89,7 @@ class OrgDashboardScreen extends StatelessWidget {
               crossAxisCount: 2, // 2 columns for mobile/tablet
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 1.25, // Fixed overflow by giving more vertical space
+              childAspectRatio: 1.1, // Fixed RenderFlex overflow by increasing card height (smaller ratio = taller)
             ),
             itemCount: MockData.dashboardKpis.length,
             itemBuilder: (context, index) {
