@@ -509,3 +509,37 @@ Just tell me the next step 💙
   * **Safety Check**: Automatic Drug Interaction warnings (shared with Physician view).
   * **Status Updates**: Notify Patient (Received -> Filling -> Ready).
   * **Org Integration**: Can be linked to a `MiGenesys Care` Org as staff.
+
+### 19.5 Service Portal (Customer Service - MiGenesys Care)
+* **Goal**: Efficient appointment scheduling and patient lookup for Customer Service staff.
+* **Key Features**:
+  * **Multi-Specialty Filtering**: Filter providers by specialty (General Practice, Cardiology, Pediatrics, etc.).
+  * **Provider Search**: Real-time search by provider name.
+  * **7-Day Calendar View**: Quick date selection with extended date picker.
+  * **Availability Slots**: View and book available slots by provider.
+  * **Patient Directory**: Search and view patient records (demographics only).
+  * **Responsive Layout**: Optimized for both phone and tablet devices.
+* **Access Control**: Customer Service staff can view demographics but not clinical data (RBAC enforced).
+
+### 19.6 Medical Dashboard (Medical Professional - MiGenesys Care)
+* **Goal**: Quick access to assigned patients and clinical workflows.
+* **Key Features**:
+  * **My Patients**: List of patients assigned to the logged-in provider.
+  * **Quick Actions**: Fast access to common tasks (e.g., View History, Add Notes).
+  * **Organization Context**: Provider sees only patients from their assigned organization.
+
+---
+
+## 20. Technical Requirements
+
+### 20.1 Test Coverage
+* **Smoke Tests**: All apps launch without error.
+* **Role-Based Routing**: Login with different roles routes to appropriate dashboards.
+* **Analytics Logging**: Screen views and PHI access are logged for compliance.
+* **RBAC Enforcement**: Clinical data access restricted by role.
+
+### 20.2 Development Standards
+* **State Management**: flutter_riverpod for reactive state.
+* **Analytics**: Centralized AnalyticsService with debugPrint in debug mode.
+* **Mock Data**: MockData class for centralized demo data.
+* **Responsive Design**: LayoutBuilder for adaptive layouts.

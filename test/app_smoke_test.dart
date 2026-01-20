@@ -10,8 +10,7 @@ void main() {
     testWidgets('MiGenesys Life App launches', (WidgetTester tester) async {
       await tester.pumpWidget(const ProviderScope(child: MiGenesysLifeApp()));
       await tester.pumpAndSettle(const Duration(seconds: 4)); // Wait for Splash
-      // Should find logic from Login screen or Splash
-      // Just verifying no crash
+      // Verify no crash
       expect(find.byType(MiGenesysLifeApp), findsOneWidget);
     });
 
@@ -24,7 +23,8 @@ void main() {
     testWidgets('MiGenesys Care App launches', (WidgetTester tester) async {
       await tester.pumpWidget(const ProviderScope(child: MiGenesysCareApp()));
       await tester.pumpAndSettle();
-      expect(find.text('MiGenesys Care Admin'), findsOneWidget);
+      // Care App now shows Login screen first
+      expect(find.text('MiGenesys Care'), findsOneWidget);
     });
 
     testWidgets('MiGenesys Partner App launches', (WidgetTester tester) async {
