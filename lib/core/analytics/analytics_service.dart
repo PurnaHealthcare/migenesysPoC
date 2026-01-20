@@ -14,9 +14,9 @@ class AnalyticsService {
   Future<void> logEvent(AnalyticsEvent event) async {
     _recentEvents.add(event); // Store for testing
     if (kDebugMode) {
-      print('📊 [ANALYTICS] ${event.action} | Category: ${event.category} | Role: ${event.role ?? "N/A"}');
+      debugPrint('📊 [ANALYTICS] ${event.action} | Category: ${event.category} | Role: ${event.role ?? "N/A"}');
       if (event.metadata != null) {
-        print('   Metadata: ${event.metadata}');
+        debugPrint('   Metadata: ${event.metadata}');
       }
     }
     // TODO: Send to backend
