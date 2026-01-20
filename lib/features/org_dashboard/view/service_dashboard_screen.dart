@@ -33,7 +33,7 @@ class _ServiceDashboardScreenState extends State<ServiceDashboardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Customer Service'),
+        title: const Text('Service Portal'),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.account_circle)),

@@ -33,7 +33,9 @@ class _CareLoginScreenState extends State<CareLoginScreen> {
       );
 
       // Routing Logic
-      if (user.role == 'Customer Service') {
+      debugPrint('🔐 Login: ${user.email} | Role: "${user.role}" | isMedical: ${user.isMedicalProfessional}');
+      if (user.role.toLowerCase().contains('service')) {
+        debugPrint('   → Routing to ServiceDashboardScreen');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => ServiceDashboardScreen(user: user)),

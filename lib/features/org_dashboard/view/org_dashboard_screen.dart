@@ -89,7 +89,7 @@ class OrgDashboardScreen extends StatelessWidget {
               crossAxisCount: 2, // 2 columns for mobile/tablet
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 1.1, // Fixed RenderFlex overflow by increasing card height (smaller ratio = taller)
+              childAspectRatio: 1.0, // Fixed RenderFlex overflow by increasing card height (smaller ratio = taller)
             ),
             itemCount: MockData.dashboardKpis.length,
             itemBuilder: (context, index) {
