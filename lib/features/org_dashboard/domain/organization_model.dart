@@ -1,14 +1,19 @@
+/// Represents a healthcare organization (clinic, hospital, or specialty center).
+///
+/// Immutable model with JSON serialization support.
 class OrganizationModel {
   final String id;
   final String name;
-  final String type; // 'Clinic', 'Hospital', 'Specialty Center'
+  /// Organization type: 'Clinic', 'Hospital', or 'Specialty Center'.
+  final String type;
 
-  OrganizationModel({
+  const OrganizationModel({
     required this.id,
     required this.name,
     required this.type,
   });
 
+  /// Deserializes from JSON map.
   factory OrganizationModel.fromJson(Map<String, dynamic> json) {
     return OrganizationModel(
       id: json['id'] as String,
@@ -17,6 +22,7 @@ class OrganizationModel {
     );
   }
 
+  /// Serializes to JSON map.
   Map<String, dynamic> toJson() {
     return {
       'id': id,

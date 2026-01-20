@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:migenesys_poc/core/analytics/analytics_service.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/care_root_screen.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/patient_detail_screen.dart';
+import 'package:migenesys_poc/features/org_dashboard/domain/staff_model.dart';
 
 void main() {
   group('Analytics Smoke Tests', () {
+    setUp(() {
+      AnalyticsService().clearEvents();
+    });
+
     testWidgets('Logs Screen View on Root Navigation', (WidgetTester tester) async {
-      await tester.pumpWidget(const MaterialApp(home: CareRootScreen()));
+      final testUser = StaffModel(
+        id: 'test1',
+        name: 'Test Admin',
+        email: 'test@example.com',
+        role: 'Practice Manager',
+        isMedicalProfessional: false,
+        orgId: 'org1',
+      );
+
+      await tester.pumpWidget(ProviderScope(
+        child: MaterialApp(home: CareRootScreen(user: testUser)),
+      ));
       await tester.pumpAndSettle();
 
       // Open Drawer and navigate
@@ -22,11 +39,8 @@ void main() {
     });
 
     testWidgets('Logs PHI Access Audit on Clinical Tab View', (WidgetTester tester) async {
-      // Clear previous events
-      // AnalyticsService is a singleton, so we accumulate events. Just check for existence.
-      
       await tester.pumpWidget(const MaterialApp(
-        home: PatientDetailScreen(isMedicalProfessional: true),
+        home: PatientDetailScreen(patientId: 'p1', isMedicalProfessional: true),
       ));
       await tester.pumpAndSettle();
 

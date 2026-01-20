@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/org_dashboard_screen.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/staff_list_screen.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/patient_list_screen.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/settings_screen.dart';
 import 'package:migenesys_poc/core/analytics/analytics_service.dart';
-import 'package:migenesys_poc/core/data/mock_data.dart';
+import 'package:migenesys_poc/features/org_dashboard/view_model/dashboard_view_model.dart';
+import 'package:migenesys_poc/features/org_dashboard/domain/staff_model.dart';
 
-
-
-
-class CareRootScreen extends StatefulWidget {
-  const CareRootScreen({super.key});
+class CareRootScreen extends ConsumerStatefulWidget {
+  final StaffModel user;
+  const CareRootScreen({super.key, required this.user});
 
   @override
-  State<CareRootScreen> createState() => _CareRootScreenState();
+  ConsumerState<CareRootScreen> createState() => _CareRootScreenState();
 }
 
-class _CareRootScreenState extends State<CareRootScreen> {
+class _CareRootScreenState extends ConsumerState<CareRootScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const OrgDashboardScreen(), // Will contain Analytics
-    const StaffListScreen(),    // Implemented
-    const PatientListScreen(),  // Patient Oversight
-    const SettingsScreen(),     // Placeholder
+  List<Widget> get _pages => [
+    const OrgDashboardScreen(),
+    StaffListScreen(orgId: widget.user.orgId),
+    const PatientListScreen(),
+    const SettingsScreen(),
   ];
 
   final List<String> _titles = [
@@ -35,26 +35,43 @@ class _CareRootScreenState extends State<CareRootScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final alertAsync = ref.watch(dashboardCriticalAlertProvider);
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(_titles[_selectedIndex]),
         actions: [
           Stack(
             children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
-              if (MockData.hasCriticalAlert)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(6)),
-                    constraints: const BoxConstraints(minWidth: 12, minHeight: 12),
-                  ),
+              IconButton(
+                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Notifications coming soon')),
                 ),
+                icon: const Icon(Icons.notifications),
+              ),
+              alertAsync.when(
+                data: (alert) => alert.isActive
+                    ? Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(6)),
+                          constraints: const BoxConstraints(minWidth: 12, minHeight: 12),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+                loading: () => const SizedBox.shrink(),
+                error: (e, s) => const SizedBox.shrink(),
+              ),
             ],
           ),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.account_circle)),
+          IconButton(
+            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Profile coming soon')),
+            ),
+            icon: const Icon(Icons.account_circle),
+          ),
         ],
       ),
       drawer: NavigationDrawer(

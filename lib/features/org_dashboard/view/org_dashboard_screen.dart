@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:migenesys_poc/core/data/mock_data.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:migenesys_poc/features/org_dashboard/view_model/dashboard_view_model.dart';
 
-class OrgDashboardScreen extends StatelessWidget {
+class OrgDashboardScreen extends ConsumerWidget {
   const OrgDashboardScreen({super.key});
 
-
-
   @override
-  Widget build(BuildContext context) {
-
-    final List<Map<String, dynamic>> kpis = [
-      {'title': 'Unique Visits', 'value': '142', 'change': '+12%', 'icon': Icons.people},
-      {'title': 'Avg Wait Time', 'value': '18m', 'change': '-2m', 'icon': Icons.timer},
-      {'title': 'New Patients', 'value': '24', 'change': '+5%', 'icon': Icons.person_add},
-    ];
-    
-    // Mock Critical Alert Logic (High Bar)
-    const bool hasCriticalAlert = true; // Simulating 'Wait Time > 45m'
-    const String alertMessage = 'CRITICAL: Cardiology Wait Times > 45m. Immediate action required.';
+  Widget build(BuildContext context, WidgetRef ref) {
+    final kpisAsync = ref.watch(dashboardKpisProvider);
+    final scoresAsync = ref.watch(dashboardScoresProvider);
+    final alertAsync = ref.watch(dashboardCriticalAlertProvider);
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -26,74 +18,84 @@ class OrgDashboardScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Smart Alert Banner
-          if (MockData.hasCriticalAlert)
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                border: Border.all(color: Colors.red),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.warning_amber_rounded, color: Colors.red),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      alertMessage,
-                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          alertAsync.when(
+            data: (alert) => alert.isActive
+                ? Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      border: Border.all(color: Colors.red),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () { _showAIAssistDialog(context); }, // Link to AI for resolution
-                    child: const Text('Resolve', style: TextStyle(color: Colors.red)),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.warning_amber_rounded, color: Colors.red),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            alert.message,
+                            style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () { _showAIAssistDialog(context); },
+                          child: const Text('Resolve', style: TextStyle(color: Colors.red)),
+                        )
+                      ],
+                    ),
                   )
-                ],
-              ),
-            ),
+                : const SizedBox.shrink(),
+            loading: () => const SizedBox.shrink(),
+            error: (e, s) => const SizedBox.shrink(),
+          ),
           const Text(
             'Practice Overview',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           // Multi-Factor Scores
-          IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: MockData.dashboardScores.map((score) => Expanded(
-                child: Card(
-                  color: (score['color'] as Color).withOpacity(0.1),
-                  elevation: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(score['value'], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: score['color'])),
-                        const SizedBox(height: 4),
-                        Text(score['title'], style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
-                      ],
+          scoresAsync.when(
+            data: (scores) => IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: scores.map((score) => Expanded(
+                  child: Card(
+                    color: score.color.withValues(alpha: 0.1),
+                    elevation: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(score.value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: score.color)),
+                          const SizedBox(height: 4),
+                          Text(score.title, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              )).toList(),
+                )).toList(),
+              ),
             ),
+            loading: () => const Center(child: LinearProgressIndicator()),
+            error: (e, s) => Text('Error: $e'),
           ),
           const SizedBox(height: 16),
           // KPI Grid
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // 2 columns for mobile/tablet
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.0, // Fixed RenderFlex overflow by increasing card height (smaller ratio = taller)
-            ),
-            itemCount: MockData.dashboardKpis.length,
-            itemBuilder: (context, index) {
-              final kpi = MockData.dashboardKpis[index];
+          kpisAsync.when(
+            data: (kpis) => GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1.0,
+              ),
+              itemCount: kpis.length,
+              itemBuilder: (context, index) {
+                final kpi = kpis[index];
                 return Card(
                   elevation: 2,
                   child: Padding(
@@ -101,22 +103,22 @@ class OrgDashboardScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(kpi['icon'], size: 32, color: Theme.of(context).primaryColor),
+                        Icon(kpi.icon, size: 32, color: Theme.of(context).primaryColor),
                         const SizedBox(height: 8),
                         Text(
-                          kpi['value'],
+                          kpi.value,
                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          kpi['title'],
+                          kpi.title,
                           style: TextStyle(color: Colors.grey[600], fontSize: 12),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          kpi['change'],
+                          kpi.change,
                           style: TextStyle(
-                            color: kpi['change'].toString().startsWith('+') ? Colors.green : Colors.red,
+                            color: kpi.isPositiveChange ? Colors.green : Colors.red,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
@@ -127,6 +129,9 @@ class OrgDashboardScreen extends StatelessWidget {
                 );
               },
             ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, s) => Text('Error loading KPIs: $e'),
+          ),
             const SizedBox(height: 24),
             // Visits by Specialty Chart Placeholder
             const Text(
@@ -235,7 +240,7 @@ class _AIAssistSheetState extends State<_AIAssistSheet> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _suggestions.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (context, index) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
                 return Center(
                   child: ActionChip(

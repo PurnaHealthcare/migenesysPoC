@@ -1,15 +1,18 @@
+/// Represents a staff member in the healthcare organization.
+///
+/// Immutable model with serialization support for API integration.
 class StaffModel {
   final String id;
   final String name;
   final String email;
-  final String role; // 'Admin', 'Clerk', etc.
+  final String role;
   final bool isMedicalProfessional;
   final bool isPharmacist;
   final String orgId;
   final String? avatar;
-  final String? specialty; // 'Cardiology', 'General Practice', 'Pediatrics', etc.
+  final String? specialty;
 
-  StaffModel({
+  const StaffModel({
     required this.id,
     required this.name,
     required this.email,
@@ -21,7 +24,19 @@ class StaffModel {
     this.specialty,
   });
 
-  // Factory for json serialization
+  /// Factory for unknown/fallback staff member
+  factory StaffModel.unknown({String orgId = 'unknown'}) {
+    return StaffModel(
+      id: '0',
+      name: 'Unknown',
+      email: '',
+      role: 'N/A',
+      isMedicalProfessional: false,
+      orgId: orgId,
+    );
+  }
+
+  /// Deserializes from JSON map.
   factory StaffModel.fromJson(Map<String, dynamic> json) {
     return StaffModel(
       id: json['id'] as String,
@@ -36,6 +51,7 @@ class StaffModel {
     );
   }
 
+  /// Serializes to JSON map.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -50,6 +66,7 @@ class StaffModel {
     };
   }
 
+  /// Creates a copy with optional field overrides.
   StaffModel copyWith({
     String? id,
     String? name,

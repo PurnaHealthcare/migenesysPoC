@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/care_login_screen.dart';
 
 class MiGenesysCareApp extends StatelessWidget {
@@ -6,19 +7,21 @@ class MiGenesysCareApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MiGenesys Care',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1565C0), // Enterprise Blue
-          primary: const Color(0xFF1565C0),
-          secondary: const Color(0xFF0D47A1),
+    return ProviderScope(
+      child: MaterialApp(
+        title: 'MiGenesys Care',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF1565C0),
+            primary: const Color(0xFF1565C0),
+            secondary: const Color(0xFF0D47A1),
+          ),
+          useMaterial3: true,
+          fontFamily: 'Roboto',
         ),
-        useMaterial3: true,
-        fontFamily: 'Roboto',
+        home: const CareLoginScreen(),
       ),
-      home: const CareLoginScreen(),
     );
   }
 }

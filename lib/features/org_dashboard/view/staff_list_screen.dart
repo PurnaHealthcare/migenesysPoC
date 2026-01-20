@@ -1,44 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:migenesys_poc/features/org_dashboard/domain/staff_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:migenesys_poc/core/analytics/analytics_service.dart';
+import 'package:migenesys_poc/features/org_dashboard/view_model/staff_view_model.dart';
 import 'add_staff_screen.dart';
 
-class StaffListScreen extends StatefulWidget {
-  const StaffListScreen({super.key});
+class StaffListScreen extends ConsumerStatefulWidget {
+  final String orgId;
+  const StaffListScreen({super.key, required this.orgId});
 
   @override
-  State<StaffListScreen> createState() => _StaffListScreenState();
+  ConsumerState<StaffListScreen> createState() => _StaffListScreenState();
 }
 
-class _StaffListScreenState extends State<StaffListScreen> {
-  // Mock Data
-  final List<StaffModel> _staff = [
-    StaffModel(id: '1', name: 'Dr. Smith', email: 'smith@clinic.com', role: 'Physician', isMedicalProfessional: true, orgId: 'org1'),
-    StaffModel(id: '2', name: 'Jane Admin', email: 'jane@clinic.com', role: 'Clerk', isMedicalProfessional: false, orgId: 'org1'),
-  ];
+class _StaffListScreenState extends ConsumerState<StaffListScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService().logScreenView('Staff Management');
+  }
 
   @override
   Widget build(BuildContext context) {
+    final staffAsync = ref.watch(staffListProvider(widget.orgId));
+
     return Scaffold(
-      body: ListView.builder(
-        itemCount: _staff.length,
-        itemBuilder: (context, index) {
-          final staff = _staff[index];
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundColor: staff.isMedicalProfessional ? Colors.blue.shade100 : Colors.grey.shade200,
-              child: Icon(
-                staff.isMedicalProfessional ? Icons.medical_services : Icons.admin_panel_settings,
-                color: staff.isMedicalProfessional ? Colors.blue : Colors.grey[700],
+      body: staffAsync.when(
+        data: (staff) => ListView.builder(
+          itemCount: staff.length,
+          itemBuilder: (context, index) {
+            final member = staff[index];
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundColor: member.isMedicalProfessional ? Colors.blue.shade100 : Colors.grey.shade200,
+                child: Icon(
+                  member.isMedicalProfessional ? Icons.medical_services : Icons.admin_panel_settings,
+                  color: member.isMedicalProfessional ? Colors.blue : Colors.grey[700],
+                ),
               ),
-            ),
-            title: Text(staff.name),
-            subtitle: Text(staff.email),
-            trailing: Chip(
-              label: Text(staff.isMedicalProfessional ? 'Medical' : 'Admin'),
-              backgroundColor: staff.isMedicalProfessional ? Colors.blue.shade50 : Colors.grey.shade50,
-            ),
-          );
-        },
+              title: Text(member.name),
+              subtitle: Text(member.email),
+              trailing: Chip(
+                label: Text(member.isMedicalProfessional ? 'Medical' : 'Admin'),
+                backgroundColor: member.isMedicalProfessional ? Colors.blue.shade50 : Colors.grey.shade50,
+              ),
+            );
+          },
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Error: $e')),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

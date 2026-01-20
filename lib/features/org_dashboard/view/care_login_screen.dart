@@ -1,57 +1,71 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/care_root_screen.dart';
-import 'package:migenesys_poc/core/data/mock_data.dart';
+import 'package:migenesys_poc/core/repositories/staff_repository.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/service_dashboard_screen.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/medical_dashboard_screen.dart';
 
-class CareLoginScreen extends StatefulWidget {
+class CareLoginScreen extends ConsumerStatefulWidget {
   const CareLoginScreen({super.key});
 
   @override
-  State<CareLoginScreen> createState() => _CareLoginScreenState();
+  ConsumerState<CareLoginScreen> createState() => _CareLoginScreenState();
 }
 
-class _CareLoginScreenState extends State<CareLoginScreen> {
-  final _emailController = TextEditingController(text: 'alice@migenesys.com');
-  final _passwordController = TextEditingController(text: 'password');
+class _CareLoginScreenState extends ConsumerState<CareLoginScreen> {
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Only pre-fill credentials in debug mode
+    _emailController = TextEditingController(text: kDebugMode ? 'alice@migenesys.com' : '');
+    _passwordController = TextEditingController(text: kDebugMode ? 'password' : '');
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   void _handleLogin() async {
     setState(() => _isLoading = true);
-    // Mock Delay
-    await Future.delayed(const Duration(seconds: 1));
     
-    if (!mounted) return;
-
     final email = _emailController.text.trim();
-    
-    // Find user in MockData
-    try {
-      final user = MockData.staffList.firstWhere(
-        (u) => u.email.toLowerCase() == email.toLowerCase(),
-        orElse: () => throw Exception('User not found'),
-      );
+    final repository = ref.read(staffRepositoryProvider);
 
-      // Routing Logic
+    try {
+      final user = await repository.findByEmail(email);
+      
+      if (user == null) {
+        throw Exception('User not found');
+      }
+
+      if (!mounted) return;
+
       debugPrint('🔐 Login: ${user.email} | Role: "${user.role}" | isMedical: ${user.isMedicalProfessional}');
+      
+      // Routing Logic based on role
       if (user.role.toLowerCase().contains('service')) {
-        debugPrint('   → Routing to ServiceDashboardScreen');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => ServiceDashboardScreen(user: user)),
         );
-      } else if (user.isMedicalProfessional && user.role != 'Practice Manager') {
-        // Medical Professionals (Doctors, Nurses, Specialists) but excluding Admins who might be medical
-        // Note: Logic can be refined. For now, if role is explicitly 'Physician', 'Nurse', 'Specialist' -> Medical Dashboard
+      } else if (user.isMedicalProfessional && !user.role.toLowerCase().contains('manager')) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => MedicalDashboardScreen(user: user)),
         );
       } else {
-        // Default to Admin/Management View (CareRootScreen)
+        // Admin/Manager role
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const CareRootScreen()),
+          MaterialPageRoute(builder: (context) => CareRootScreen(user: user)),
         );
       }
     } catch (e) {
@@ -131,7 +145,9 @@ class _CareLoginScreenState extends State<CareLoginScreen> {
                 ),
                 const SizedBox(height: 16),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Password reset coming soon')),
+                  ),
                   child: const Text('Forgot Password?'),
                 ),
                   ],
