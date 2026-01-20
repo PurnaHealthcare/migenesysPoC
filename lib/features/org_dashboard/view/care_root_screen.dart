@@ -3,6 +3,7 @@ import 'package:migenesys_poc/features/org_dashboard/view/org_dashboard_screen.d
 import 'package:migenesys_poc/features/org_dashboard/view/staff_list_screen.dart';
 import 'package:migenesys_poc/features/org_dashboard/view/patient_list_screen.dart';
 import 'package:migenesys_poc/core/analytics/analytics_service.dart';
+import 'package:migenesys_poc/core/data/mock_data.dart';
 
 
 
@@ -35,6 +36,24 @@ class _CareRootScreenState extends State<CareRootScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_titles[_selectedIndex]),
+        actions: [
+          Stack(
+            children: [
+              IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
+              if (MockData.hasCriticalAlert)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(6)),
+                    constraints: const BoxConstraints(minWidth: 12, minHeight: 12),
+                  ),
+                ),
+            ],
+          ),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.account_circle)),
+        ],
       ),
       drawer: NavigationDrawer(
         selectedIndex: _selectedIndex,

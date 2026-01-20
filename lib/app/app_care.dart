@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:migenesys_poc/features/org_dashboard/view/care_root_screen.dart';
+import 'package:migenesys_poc/features/org_dashboard/view/care_login_screen.dart';
 
 class MiGenesysCareApp extends StatelessWidget {
   const MiGenesysCareApp({super.key});
@@ -18,7 +18,7 @@ class MiGenesysCareApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Roboto',
       ),
-      home: const CareRootScreen(),
+      home: const CareLoginScreen(),
     );
   }
 }

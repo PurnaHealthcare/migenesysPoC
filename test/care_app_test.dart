@@ -10,6 +10,10 @@ void main() {
       await tester.pumpWidget(const ProviderScope(child: MiGenesysCareApp()));
       await tester.pumpAndSettle();
 
+      // Login
+      await tester.tap(find.text('Login'));
+      await tester.pumpAndSettle(const Duration(seconds: 2)); // Wait for mock delay + nav
+
       // Find KPI cards
       expect(find.text('Unique Visits'), findsOneWidget);
       expect(find.text('Avg Wait Time'), findsOneWidget);

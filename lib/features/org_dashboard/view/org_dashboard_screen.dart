@@ -19,67 +19,47 @@ class OrgDashboardScreen extends StatelessWidget {
     const bool hasCriticalAlert = true; // Simulating 'Wait Time > 45m'
     const String alertMessage = 'CRITICAL: Cardiology Wait Times > 45m. Immediate action required.';
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('MiGenesys Care'),
-        actions: [
-          Stack(
-            children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
-              if (hasCriticalAlert)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(6)),
-                    constraints: const BoxConstraints(minWidth: 12, minHeight: 12),
-                  ),
-                ),
-            ],
-          ),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.account_circle)),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Smart Alert Banner
-            if (hasCriticalAlert)
-              Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  border: Border.all(color: Colors.red),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.warning_amber_rounded, color: Colors.red),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        alertMessage,
-                        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () { _showAIAssistDialog(context); }, // Link to AI for resolution
-                      child: const Text('Resolve', style: TextStyle(color: Colors.red)),
-                    )
-                  ],
-                ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Smart Alert Banner
+          if (MockData.hasCriticalAlert)
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                border: Border.all(color: Colors.red),
+                borderRadius: BorderRadius.circular(8),
               ),
-            const Text(
-              'Practice Overview',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              child: Row(
+                children: [
+                  const Icon(Icons.warning_amber_rounded, color: Colors.red),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      alertMessage,
+                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () { _showAIAssistDialog(context); }, // Link to AI for resolution
+                    child: const Text('Resolve', style: TextStyle(color: Colors.red)),
+                  )
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            // Multi-Factor Scores
-            Row(
+          const Text(
+            'Practice Overview',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          // Multi-Factor Scores
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: MockData.dashboardScores.map((score) => Expanded(
                 child: Card(
                   color: (score['color'] as Color).withOpacity(0.1),
@@ -87,6 +67,7 @@ class OrgDashboardScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(score['value'], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: score['color'])),
                         const SizedBox(height: 4),
@@ -97,20 +78,21 @@ class OrgDashboardScreen extends StatelessWidget {
                 ),
               )).toList(),
             ),
-            const SizedBox(height: 16),
-            // KPI Grid
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 2 columns for mobile/tablet
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.5,
-              ),
-              itemCount: MockData.dashboardKpis.length,
-              itemBuilder: (context, index) {
-                final kpi = MockData.dashboardKpis[index];
+          ),
+          const SizedBox(height: 16),
+          // KPI Grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // 2 columns for mobile/tablet
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1.25, // Fixed overflow by giving more vertical space
+            ),
+            itemCount: MockData.dashboardKpis.length,
+            itemBuilder: (context, index) {
+              final kpi = MockData.dashboardKpis[index];
                 return Card(
                   elevation: 2,
                   child: Padding(
@@ -175,16 +157,6 @@ class OrgDashboardScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          _showAIAssistDialog(context);
-        },
-        icon: const Icon(Icons.auto_awesome),
-        label: const Text('MiGenesys Assist'),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-      ),
     );
   }
 
