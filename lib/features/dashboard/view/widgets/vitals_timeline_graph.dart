@@ -19,20 +19,20 @@ class VitalsTimelineGraph extends StatelessWidget {
           ),
         ),
         Container(
-          height: 120,
+          height: 150,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
             ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: List.generate(12, (index) {
-              final height = 40.0 + random.nextInt(60);
+              final height = 20.0 + random.nextInt(40);
               final statusColor = _getStatusColor(random.nextInt(3));
               return Column(
                 mainAxisAlignment: MainAxisAlignment.end,

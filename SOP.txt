@@ -543,3 +543,77 @@ Just tell me the next step 💙
 * **Analytics**: Centralized AnalyticsService with debugPrint in debug mode.
 * **Mock Data**: MockData class for centralized demo data.
 * **Responsive Design**: LayoutBuilder for adaptive layouts.
+
+---
+
+## 21. DocAssist Pro Enhancements (January 21, 2026)
+
+This section documents the comprehensive updates made to the DocAssist physician workflow during the January 21, 2026 development session.
+
+### 21.1 Clinical-First Patient Detail View (v3.0)
+* **Tab Reordering**: The "Clinical" tab is now the default first tab when medical professionals view patient details, ensuring immediate access to relevant clinical data.
+* **Risk-Stratified Medications**:
+  * Added three risk indicator icons for each medication:
+    * **DNA (Genetic Risk)**: `Icons.biotech` - Indicates pharmacogenomic concerns.
+    * **Labs (Laboratory Values)**: `Icons.science` - Indicates lab value conflicts.
+    * **Drug-Drug Interaction**: `Icons.medication_liquid` - Indicates potential interactions.
+  * Icons highlight in **Red** when risks are detected (e.g., Plavix DNA risk, Lisinopril Lab risk).
+* **Physician Override**: "Resolve Risk Alerts" link allows physicians to manually adjust medication risk status (Red/Yellow/Green).
+* **Vitals Trends**: Integrated 1-year trend graphs for Blood Pressure, Pulse, Temperature, and SpO2 using the `VitalsTimelineGraph` widget.
+
+### 21.2 DocAssist Pro Subscription Features (v4.0)
+* **Dashboard Icons**: Added Search, Alerts (Warning), Notifications, and Email icons to the physician dashboard AppBar.
+* **Critical Alerts Menu**: The warning icon opens a bottom sheet listing patients with identified medication risks (e.g., "James T. Kirk - Plavix Genetic Inefficacy").
+* **ICD-10 Diagnosis Management**: 
+  * New "Diagnosis: ICD-10" section in patient details.
+  * Displays existing diagnoses as chips (e.g., I21.9 - Acute Myocardial Infarction).
+  * "Add Diagnosis" chip for adding new codes.
+* **Glowing Subscription Banner**:
+  * Animated orange-to-red gradient banner with glowing effect.
+  * Text: "Important genetic risk and personalized information for this patient is missing, subscribe to DoAssist Pro to unlock recommendations."
+  * Clicking opens subscription dialog ($49.99/mo per provider).
+* **Gated Clinical Logic**: Medication risk icons and color-coding are hidden until DocAssist Pro subscription is active.
+
+### 21.3 Advanced Diagnostic Tools (v5.0)
+* **Diagnostic Tool Icons**: Added Labs, Documents, and Imaging icons next to the Diagnosis header.
+  * **Labs**: Popup showing "View the PDF" + "Summary of labs for DocAssist-Pro users".
+  * **Documents**: Popup with PDF icon + "Summary of documents for DocAssist Pro users".
+  * **Imaging**: Popup showing "Reports view" with list of imaging studies.
+* **Treatment Plan Card** (later integrated into Clinic Notes):
+  * MI Management Action Items with specific recommendations:
+    * STOP Plavix → START Prasugrel (Genetic Inefficacy)
+    * STOP Atorvastatin → START Rosuvastatin (Side Effect Risk)
+    * Reduce Lisinopril dose (Renal Guardrails)
+    * Cardiology Referral (Repeat Angiogram)
+    * Repeat Labs: Check Creatinine levels
+    * Daily limited water intake (Fluid Management)
+
+### 21.4 AI-Powered Clinic Notes & Prescribing (v6.0)
+* **Color-Coded Medication Names**:
+  * **Red**: Critical risk (e.g., Plavix - Genetic Inefficacy).
+  * **Orange**: Warning/Monitor (e.g., Atorvastatin - Myopathy Risk, Lisinopril - Renal Sensitivity).
+  * **Green**: Optimal/Safe (e.g., Carvedilol).
+  * Colors only visible to DocAssist Pro subscribers.
+* **AI Clinic Notes**:
+  * Microphone icon for voice-activated note taking (Pro feature).
+  * When activated, generates structured AI summary:
+    * **HISTORY OF PRESENT ILLNESS**: Patient narrative.
+    * **INTERVAL HISTORY**: Medication adherence, lab results, hospitalizations.
+    * **RECOMMENDATIONS**: Integrated treatment plan with medication swaps, referrals, and lifestyle guidance.
+  * Non-subscribers see: "Subscribe to DocAssist Pro to enable AI-assisted clinic notes."
+* **e-Signature**: Green checkmark button opens signature dialog to sign and lock clinical notes.
+* **Prescription Options**:
+  * "Add Prescription" button opens new Rx form.
+  * "Order Refills" button sends refill request to pharmacy.
+
+### 21.5 Modified Files
+* `lib/features/patient_mgmt/view/physician_dashboard_screen.dart`: Dashboard icons, alerts menu.
+* `lib/features/org_dashboard/view/patient_detail_screen.dart`: Clinical tab, medications, diagnosis, clinic notes, prescribing.
+* `lib/features/dashboard/view/widgets/vitals_timeline_graph.dart`: Layout fixes for vitals chart.
+
+### 21.6 Branch Information
+* **Branch**: `DocAssist_Jan_21_Chethan`
+* **Target**: `lib/main_docassist.dart`
+* **Simulator**: iPhone 16e
+
+---
