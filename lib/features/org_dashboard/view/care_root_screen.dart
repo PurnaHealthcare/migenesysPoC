@@ -7,6 +7,7 @@ import 'package:migenesys_poc/features/org_dashboard/view/settings_screen.dart';
 import 'package:migenesys_poc/core/analytics/analytics_service.dart';
 import 'package:migenesys_poc/features/org_dashboard/view_model/dashboard_view_model.dart';
 import 'package:migenesys_poc/features/org_dashboard/domain/staff_model.dart';
+import 'package:migenesys_poc/features/org_dashboard/view/messaging_screen.dart';
 
 class CareRootScreen extends ConsumerStatefulWidget {
   final StaffModel user;
@@ -67,10 +68,17 @@ class _CareRootScreenState extends ConsumerState<CareRootScreen> {
             ],
           ),
           IconButton(
-            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile coming soon')),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MessagingScreen()),
             ),
-            icon: const Icon(Icons.account_circle),
+            icon: const Icon(Icons.message),
+            tooltip: 'Messages',
+          ),
+          IconButton(
+            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false),
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
           ),
         ],
       ),

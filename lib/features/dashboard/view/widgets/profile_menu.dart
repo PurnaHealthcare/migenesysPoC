@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../screens/security_screen.dart';
 import '../screens/family_history_screen.dart';
 import '../screens/allergies_screen.dart';
+import '../../../auth/view/exit_screen.dart';
 
 class ProfileMenu extends StatelessWidget {
   const ProfileMenu({super.key});
@@ -55,6 +56,20 @@ class ProfileMenu extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const AllergiesScreen()),
             ),
+          ),
+          const SizedBox(height: 16),
+          _buildMenuItem(
+            context,
+            icon: Icons.logout,
+            title: 'Logout',
+            color: Colors.red,
+            onTap: () {
+              // Navigate to Exit Screen for secure logout transition
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ExitScreen()),
+              );
+            },
           ),
           const SizedBox(height: 16),
         ],

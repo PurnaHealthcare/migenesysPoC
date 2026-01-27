@@ -38,10 +38,9 @@ class _ServiceDashboardScreenState extends ConsumerState<ServiceDashboardScreen>
             icon: const Icon(Icons.notifications),
           ),
           IconButton(
-            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile coming soon')),
-            ),
-            icon: const Icon(Icons.account_circle),
+            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false),
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
           ),
         ],
       ),

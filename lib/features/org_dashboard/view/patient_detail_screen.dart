@@ -18,7 +18,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> with SingleTi
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
     
     // Log initial screen view - Now starting with Clinical Tab (index 0)
@@ -27,7 +27,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> with SingleTi
 
   void _handleTabSelection() {
     if (_tabController.indexIsChanging) {
-      final tabName = _tabController.index == 0 ? 'ClinicalTab' : 'AdminTab';
+      final tabNames = ['ClinicalTab', 'VaccinationsTab', 'AdminTab'];
+      final tabName = tabNames[_tabController.index];
       AnalyticsService().logScreenView('PatientDetails_$tabName', role: widget.isMedicalProfessional ? 'Medical' : 'Admin');
       
       // Audit Log for Clinical Access
@@ -58,7 +59,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> with SingleTi
           controller: _tabController,
           tabs: const [
             Tab(text: 'Clinical'),
-            Tab(text: 'Admin / Demographics'),
+            Tab(text: 'Vaccinations'),
+            Tab(text: 'Admin'),
           ],
         ),
       ),
@@ -70,7 +72,12 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> with SingleTi
               ? const _ClinicalTab() 
               : const _AccessRestrictedView(),
 
-          // Tab 2: Admin View (Now Second) - Accessible to All
+          // Tab 2: Vaccinations - Accessible to Medical Professionals
+          widget.isMedicalProfessional 
+              ? const _VaccinationsTab(patientAge: 45, patientGender: 'Male') 
+              : const _AccessRestrictedView(),
+
+          // Tab 3: Admin View - Accessible to All
           const _AdminTab(),
         ],
       ),
@@ -167,6 +174,328 @@ class _AdminTab extends StatelessWidget {
     );
   }
 }
+
+// ==================== VACCINATIONS TAB ====================
+
+class _VaccinationsTab extends StatelessWidget {
+  final int patientAge;
+  final String patientGender;
+  
+  const _VaccinationsTab({required this.patientAge, required this.patientGender});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Vaccination Status Section
+        _buildSectionHeader('Vaccination Status', Icons.vaccines),
+        const SizedBox(height: 12),
+        _buildVaccineCard('COVID-19 (Pfizer)', 'Complete', '2 doses + booster', 'Dec 15, 2024', VaccineStatus.complete),
+        _buildVaccineCard('Influenza 2025-26', 'Due', 'Annual flu shot', 'Due: Oct 2025', VaccineStatus.due),
+        _buildVaccineCard('Tetanus/Tdap', 'Complete', 'Booster', 'Mar 2023', VaccineStatus.complete),
+        _buildVaccineCard('Hepatitis B', 'Complete', '3-dose series', 'Completed 2020', VaccineStatus.complete),
+        _buildVaccineCard('Shingles (Shingrix)', 'Due', 'Recommended at 50+', 'Not yet scheduled', VaccineStatus.due),
+        _buildVaccineCard('Pneumococcal (PPSV23)', 'Overdue', 'Recommended for adults', 'Last: Never', VaccineStatus.overdue),
+        
+        const SizedBox(height: 32),
+        
+        // Vaccination Passport / e-Card Section
+        _buildSectionHeader('Vaccination Passport', Icons.card_membership),
+        const SizedBox(height: 12),
+        _buildVaccinationPassport(context),
+        
+        const SizedBox(height: 32),
+        
+        // Preventive Care Section (Age/Gender specific)
+        _buildSectionHeader('Preventive Care Screenings', Icons.health_and_safety),
+        const SizedBox(height: 12),
+        
+        // Colonoscopy - Show for patients 40+
+        if (patientAge >= 40)
+          _buildScreeningCard(
+            'Colonoscopy',
+            'Recommended for adults 40+',
+            'Last: Aug 2022',
+            'Next Due: Aug 2032',
+            Icons.monitor_heart,
+            Colors.teal,
+          ),
+        
+        // Pap Smear - Show for female patients only
+        if (patientGender.toLowerCase() == 'female')
+          _buildScreeningCard(
+            'Pap Smear',
+            'Cervical cancer screening',
+            'Last: N/A',
+            'Schedule recommended',
+            Icons.female,
+            Colors.pink,
+          ),
+        
+        // General screenings for all
+        _buildScreeningCard(
+          'Lipid Panel',
+          'Cholesterol screening',
+          'Last: Jan 2026',
+          'Annual',
+          Icons.bloodtype,
+          Colors.red,
+        ),
+        _buildScreeningCard(
+          'Blood Pressure',
+          'Cardiovascular screening',
+          'Last: Jan 15, 2026',
+          'Every visit',
+          Icons.speed,
+          Colors.indigo,
+        ),
+        
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.indigo, size: 24),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.indigo,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVaccineCard(String name, String status, String details, String date, VaccineStatus vaccineStatus) {
+    Color statusColor;
+    IconData statusIcon;
+    
+    switch (vaccineStatus) {
+      case VaccineStatus.complete:
+        statusColor = Colors.green;
+        statusIcon = Icons.check_circle;
+        break;
+      case VaccineStatus.due:
+        statusColor = Colors.orange;
+        statusIcon = Icons.schedule;
+        break;
+      case VaccineStatus.overdue:
+        statusColor = Colors.red;
+        statusIcon = Icons.warning;
+        break;
+    }
+
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: statusColor.withValues(alpha: 0.3), width: 1.5),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: statusColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(statusIcon, color: statusColor, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(details, style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+                  Text(date, style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: statusColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                status,
+                style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVaccinationPassport(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.indigo.shade700, Colors.indigo.shade400],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.indigo.withValues(alpha: 0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'VACCINATION PASSPORT',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'James T. Kirk',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'DOB: Mar 22, 1980',
+                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ],
+              ),
+              Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Icon(Icons.qr_code_2, size: 50, color: Colors.indigo),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Divider(color: Colors.white30),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Vaccines on Record', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                  Text('4 Complete • 2 Pending', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              Row(
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('📧 E-Card sent to patient email')),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white70),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    icon: const Icon(Icons.share, size: 16),
+                    label: const Text('Share', style: TextStyle(fontSize: 12)),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('📥 Downloading vaccination e-card...')),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.indigo,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    icon: const Icon(Icons.download, size: 16),
+                    label: const Text('Download', style: TextStyle(fontSize: 12)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScreeningCard(String title, String description, String lastDate, String nextDue, IconData icon, Color color) {
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(description, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+            const SizedBox(height: 2),
+            Text('$lastDate • $nextDue', style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+          ],
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.calendar_month, color: Colors.indigo),
+          onPressed: () {},
+          tooltip: 'Schedule',
+        ),
+      ),
+    );
+  }
+}
+
+enum VaccineStatus { complete, due, overdue }
 
 class _ClinicalTab extends StatefulWidget {
   const _ClinicalTab();

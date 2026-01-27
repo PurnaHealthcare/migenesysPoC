@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:migenesys_poc/features/health_journey/view/health_journey_screen.dart';
+import 'screens/allergies_screen.dart';
 import 'widgets/organ_system_grid.dart';
 import 'widgets/profile_menu.dart';
 import '../view_model/vitals_provider.dart';
@@ -385,15 +386,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           // Allergy Icon
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.coronavirus, 
-                color: hasAllergies ? Colors.red : Colors.green,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AllergiesScreen()),
+                );
+              },
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.coronavirus, 
+                  color: hasAllergies ? Colors.red : Colors.green,
+                ),
               ),
             ),
           ),

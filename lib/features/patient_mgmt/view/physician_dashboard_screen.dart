@@ -64,8 +64,9 @@ class _PhysicianDashboardScreenState extends ConsumerState<PhysicianDashboardScr
             icon: const Icon(Icons.notifications_none),
           ),
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.email_outlined),
+            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false),
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -99,6 +100,11 @@ class _PhysicianDashboardScreenState extends ConsumerState<PhysicianDashboardScr
               const Text('Here is what\'s happening with your practice today.'),
               const SizedBox(height: 24),
 
+              // Staff Communication
+              _buildCommunicationSection(),
+
+              const SizedBox(height: 24),
+
               // KPI Section
               kpisAsync.when(
                 data: (kpis) => SizedBox(
@@ -120,9 +126,20 @@ class _PhysicianDashboardScreenState extends ConsumerState<PhysicianDashboardScr
               const SizedBox(height: 32),
 
               // Calendar Section
-              const Text(
-                'Schedule',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Schedule',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  TextButton.icon(
+                    onPressed: () => _showSurgeryBlockingDialog(context),
+                    icon: const Icon(Icons.cut, size: 16),
+                    label: const Text('Block Surgery'),
+                    style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
               _buildHorizontalCalendar(),
@@ -255,10 +272,6 @@ class _PhysicianDashboardScreenState extends ConsumerState<PhysicianDashboardScr
       );
     }
 
-    // Identify open slots vs appointments
-    // In our mock data, patients have nextVisit == 'Today' but don't specify time.
-    // For the UI demonstration, we'll associate them with booked slots if available.
-    
     return Column(
       children: [
         ...patients.map((p) => _buildTimelineItem(
@@ -288,91 +301,96 @@ class _PhysicianDashboardScreenState extends ConsumerState<PhysicianDashboardScr
     required bool isAppointment,
     PatientModel? patient,
   }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 70,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 14.0),
-            child: Text(
-              time,
-              style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ),
-        Column(
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              margin: const EdgeInsets.only(top: 16),
-              decoration: BoxDecoration(
-                color: isAppointment ? Colors.indigo : Colors.green,
-                shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: !isAppointment ? () => _showSlotActionDialog(context) : null,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 70,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 14.0),
+              child: Text(
+                time,
+                style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w500),
               ),
             ),
-            Container(
-              width: 2,
-              height: 60,
-              color: Colors.grey.shade200,
-            ),
-          ],
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isAppointment ? Colors.indigo.shade50 : Colors.green.shade50,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isAppointment ? Colors.indigo.shade900 : Colors.green.shade900,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isAppointment ? Colors.indigo.shade700 : Colors.green.shade700,
-                        ),
-                      ),
-                    ],
-                  ),
+          ),
+          Column(
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                margin: const EdgeInsets.only(top: 16),
+                decoration: BoxDecoration(
+                  color: isAppointment ? Colors.indigo : Colors.green,
+                  shape: BoxShape.circle,
                 ),
-                if (isAppointment && patient != null)
-                  IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PatientDetailScreen(
-                            patientId: patient.id,
-                            isMedicalProfessional: true,
+              ),
+              Container(
+                width: 2,
+                height: 60,
+                color: Colors.grey.shade200,
+              ),
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isAppointment ? Colors.indigo.shade50 : Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isAppointment ? Colors.indigo.shade900 : Colors.green.shade900,
                           ),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.arrow_forward_ios, size: 14),
-                    color: Colors.indigo,
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isAppointment ? Colors.indigo.shade700 : Colors.green.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-              ],
+                  if (isAppointment && patient != null)
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PatientDetailScreen(
+                              patientId: patient.id,
+                              isMedicalProfessional: true,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.arrow_forward_ios, size: 14),
+                      color: Colors.indigo,
+                    )
+                  else if (!isAppointment)
+                    const Icon(Icons.touch_app, size: 16, color: Colors.green),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -566,5 +584,189 @@ class _PhysicianDashboardScreenState extends ConsumerState<PhysicianDashboardScr
     final ampm = dateTime.hour >= 12 ? 'PM' : 'AM';
     final minute = dateTime.minute.toString().padLeft(2, '0');
     return '$hour:$minute $ampm';
+  }
+
+  Widget _buildCommunicationSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.shade100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.chat_bubble_outline, size: 20, color: Colors.indigo),
+              SizedBox(width: 8),
+              Text('Staff Communication', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
+              Spacer(),
+              Chip(
+                label: Text('Staff Only', style: TextStyle(fontSize: 10, color: Colors.white)),
+                backgroundColor: Colors.indigo,
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const TextField(
+            decoration: InputDecoration(
+              hintText: 'Type message to staff...',
+              border: OutlineInputBorder(),
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              suffixIcon: Icon(Icons.send, size: 20),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Recent: "Surgery room B prep completed" - Nurse Joy (10m ago)', 
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade700, fontStyle: FontStyle.italic),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSlotActionDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Slot Actions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.person_add, color: Colors.green),
+              title: const Text('Add Patient'),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Redirecting to patient registration...')));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.block, color: Colors.red),
+              title: const Text('Block Slot'),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Slot blocked successfully.')));
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSurgeryBlockingDialog(BuildContext context) {
+    String? selectedAnesthesia;
+    String? selectedNurse;
+    String? selectedPatient;
+    final patientController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Block Surgery'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Schedule surgery block and notify team.', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                const SizedBox(height: 20),
+                
+                // Patient Search
+                const Text('Patient Information', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    labelText: 'Search Patient',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'James T. Kirk', child: Text('James T. Kirk (ID: P001)')),
+                    DropdownMenuItem(value: 'Jean-Luc Picard', child: Text('Jean-Luc Picard (ID: P002)')),
+                    DropdownMenuItem(value: 'Benjamin Sisko', child: Text('Benjamin Sisko (ID: P003)')),
+                  ],
+                  onChanged: (v) => setState(() => selectedPatient = v),
+                ),
+                if (selectedPatient != null)
+                   Padding(
+                     padding: const EdgeInsets.only(top: 8.0, left: 4),
+                     child: Text('Condition: Cardiovascular Checkup', style: TextStyle(fontSize: 12, color: Colors.indigo.shade700)),
+                   ),
+
+                const SizedBox(height: 20),
+                const Text('Surgical Team', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                
+                // Anesthesiologist Search
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    labelText: 'Anesthesiologist',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person_search),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'Dr. Spock', child: Text('Dr. Spock')),
+                    DropdownMenuItem(value: 'Dr. House', child: Text('Dr. House')),
+                    DropdownMenuItem(value: 'Dr. McCoy', child: Text('Dr. McCoy')),
+                  ],
+                  onChanged: (v) => setState(() => selectedAnesthesia = v),
+                ),
+                const SizedBox(height: 12),
+                
+                // Nurse Search
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    labelText: 'Scrub Nurse / Staff',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person_search),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'Nurse Chapel', child: Text('Nurse Chapel')),
+                    DropdownMenuItem(value: 'Nurse Joy', child: Text('Nurse Joy')),
+                    DropdownMenuItem(value: 'Nurse Ogawa', child: Text('Nurse Ogawa')),
+                  ],
+                  onChanged: (v) => setState(() => selectedNurse = v),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton.icon(
+              onPressed: (selectedAnesthesia != null && selectedNurse != null && selectedPatient != null) ? () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Surgery Blocked for $selectedPatient. Notification sent to $selectedAnesthesia and $selectedNurse.'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } : null,
+              icon: const Icon(Icons.check_circle_outline, size: 18),
+              label: const Text('Block & Notify Team'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.indigo,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

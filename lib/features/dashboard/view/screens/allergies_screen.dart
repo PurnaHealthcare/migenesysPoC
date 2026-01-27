@@ -50,8 +50,12 @@ class _AllergiesScreenState extends ConsumerState<AllergiesScreen> {
                 spacing: 8,
                 children: selectedAllergies.map((allergy) {
                   return Chip(
-                    label: Text(allergy),
-                    deleteIcon: const Icon(Icons.close, size: 18),
+                    label: Text(
+                      allergy,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    backgroundColor: Colors.red,
+                    deleteIcon: const Icon(Icons.close, size: 18, color: Colors.white),
                     onDeleted: () {
                       notifier.removeAllergy(allergy);
                     },
